@@ -1,0 +1,82 @@
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <ion-title>SAE Móvil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">login</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <div class="ion-text-center ion-padding"> 
+  <form (ngSubmit)="login( fLogin )" #fLogin="ngForm">
+    <ion-grid fixed>
+
+      <ion-row>
+        <ion-col>
+          <img src="/assets/avatars/PELOMG.jpg">
+        </ion-col>
+      </ion-row>
+
+      <br>
+
+      <ion-row>
+        <ion-col>
+          
+            <ion-list>
+              
+              <ion-item class="custom-input" >
+                <ion-label position="stacked" >RUT:</ion-label>
+                <ion-input name="rut"
+                           aria-label="RUT:"
+                           type="text"
+                           [(ngModel)]="loginUser.rut"
+                           required></ion-input>
+              </ion-item>
+              
+              <br>
+              
+              <ion-item class="custom-input" >
+                <ion-label position="stacked" >Password:</ion-label>
+                <ion-input name="password"
+                         aria-label="Password:"
+                         type="{{ showPassword ? 'text' : 'password' }}"
+                         [(ngModel)]="loginUser.password"
+                         required></ion-input>
+                <ion-icon 
+                         slot="end"
+                         name="{{ showPassword ? 'eye-off' : 'eye' }}"
+                         (click)="toggleShowPassword()"></ion-icon>
+              </ion-item>
+
+            </ion-list>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+        <ion-col>
+          <ion-button type="submit"
+                      color="secondary"
+                      expand="full"
+                      shape="round">
+            Ingresar
+          </ion-button>
+        </ion-col>
+      </ion-row>
+
+    </ion-grid>
+  </form>
+
+  <div class="background-image"></div>
+
+  </div> 
+
+  <div class="footer">
+    <p>Términos y condiciones</p>
+    <p>© 2023 Pelom</p>
+  </div>
+
+</ion-content>

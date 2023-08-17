@@ -1,0 +1,80 @@
+
+.mainSlide, .mainSlide ion-slide {
+    width: 100%;
+    height: 100%;
+}
+
+img {
+    width: 250px;
+}
+
+.pick-avatar {
+    width: 80px;
+    opacity: 0.3;
+}
+
+.pick-avatar-seleccionado {
+    transition: opacity 0.5s linear;
+    opacity: 1 !important;
+}
+
+
+/* styles.scss */
+/* styles.scss */
+.background-image {
+    background-image:  linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)),
+    url('/assets/background-image-1.png'); /* Ruta de tu imagen de fondo */
+    background-size: cover;
+    background-position: bottom;
+    width: 100%;
+    height: 300px; /* Ajusta la altura según tus necesidades */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-radius: 60% 100% 0 0; /* Aplica una curva a la parte superior de la imagen */
+  }
+  
+
+  /* styles.scss */
+.ion-content.scroll-y {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+
+
+  /* styles.scss */
+.footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 80px;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
+    color: white;
+    padding: 5px;
+    border-radius: 60% 100% 0 0; 
+  }
+
+  
+  .custom-input {
+
+    --padding-start: 15px; /* Espacio izquierdo */
+    --padding-end: 2px;   /* Espacio derecho */
+    --padding-top: 1px;   /* Espacio superior */
+    --padding-bottom: 1px; /* Espacio inferior */
+
+    --border-width: 2px;    /* Ancho del borde */
+    --border-radius: 10px;  /* Radio del borde */
+    --border-color: #ccc;   /* Color del borde */
+    --background: #f5f5f5; /* Color de fondo */
+    --min-height: 15px;     /* Altura mínima */
+
+    /* Cambiar el color del texto */
+    --color: gray;
+
+  }
+
+  
