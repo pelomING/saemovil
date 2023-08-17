@@ -1,0 +1,7 @@
+{
+  "name": "saemovil",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
