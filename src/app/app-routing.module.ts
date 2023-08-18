@@ -22,7 +22,7 @@ const routes: Routes = [
     loadChildren: () => import('./pages/new-eventosae-modal/new-eventosae-modal.module').then( m => m.NewEventosaeModalPageModule)
   },
   {
-    path: 'message/:id',
+    path: 'eventosae/:id',
     loadChildren: () => import('./pages/view-eventosae/view-eventosae.module').then( m => m.ViewEventosaePageModule)
   }
 ];
