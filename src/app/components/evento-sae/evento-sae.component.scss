@@ -1,0 +1,82 @@
+ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+  }
+  
+  ion-label {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+  
+  ion-item h2 {
+    font-weight: 600;
+    margin: 0;
+  }
+  
+  ion-item p {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    width: 95%;
+  }
+  
+  ion-item .date {
+    float: right;
+    align-items: center;
+    display: flex;
+  }
+  
+  ion-item ion-icon {
+    color: #c9c9ca;
+  }
+  
+  ion-item ion-note {
+    font-size: 15px;
+    margin-right: 8px;
+    font-weight: normal;
+  }
+  
+  ion-item ion-note.md {
+    margin-right: 14px;
+  }
+  
+  .dot {
+    display: block;
+    height: 12px;
+    width: 12px;
+    border-radius: 50%;
+    align-self: start;
+    margin: 16px 10px 16px 16px;
+  }
+  
+  .dot-unread {
+    background: var(--ion-color-primary);
+  }
+  
+  /* Estado leído */
+  .dot-read {
+    background: var(--ion-color-secondary);
+  }
+  
+  /* Estado activo */
+  .dot-active {
+    background: var(--ion-color-success);
+  }
+  
+  
+  // <ion-button>Default</ion-button>
+  // <ion-button color="primary">Primary</ion-button>
+  // <ion-button color="secondary">Secondary</ion-button>
+  // <ion-button color="tertiary">Tertiary</ion-button>
+  // <ion-button color="success">Success</ion-button>
+  // <ion-button color="warning">Warning</ion-button>
+  // <ion-button color="danger">Danger</ion-button>
+  // <ion-button color="light">Light</ion-button>
+  // <ion-button color="medium">Medium</ion-button>
+  // <ion-button color="dark">Dark</ion-button>
+  
+  
+  ion-footer ion-title {
+    font-size: 11px;
+    font-weight: normal;
+  }

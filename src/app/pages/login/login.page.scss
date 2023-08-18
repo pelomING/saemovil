@@ -54,7 +54,7 @@ img {
     text-align: center;
     background-color: rgba(0, 0, 0, 0.5); /* Fondo semitransparente */
     color: white;
-    padding: 5px;
+    padding: 2px;
     border-radius: 60% 100% 0 0; 
   }
 
@@ -63,14 +63,14 @@ img {
 
     --padding-start: 15px; /* Espacio izquierdo */
     --padding-end: 2px;   /* Espacio derecho */
-    --padding-top: 1px;   /* Espacio superior */
-    --padding-bottom: 1px; /* Espacio inferior */
+    //--padding-top: 1px;   /* Espacio superior */
+    //--padding-bottom: 1px; /* Espacio inferior */
 
-    --border-width: 2px;    /* Ancho del borde */
+    //--border-width: 2px;    /* Ancho del borde */
     --border-radius: 10px;  /* Radio del borde */
     --border-color: #ccc;   /* Color del borde */
     --background: #f5f5f5; /* Color de fondo */
-    --min-height: 15px;     /* Altura mínima */
+    //--min-height: 15px;     /* Altura mínima */
 
     /* Cambiar el color del texto */
     --color: gray;

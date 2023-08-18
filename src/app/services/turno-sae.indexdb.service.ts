@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { IDBPDatabase } from 'idb';
-import { TurnosaeModel } from '../models/turnosae.model';
+import { TurnoSaeModel } from '../models/turno-sae.model';
 import { IndexdbService } from './indexdb.service'
 
 @Injectable({
     providedIn: 'root'
   })
 
-export class TurnosaeIndexdbService {
+export class TurnoSaeIndexdbService {
   
     public db!: IDBPDatabase;
 
@@ -18,7 +18,7 @@ export class TurnosaeIndexdbService {
       this.indexdbService.openDatabase()
       .then((dbIndex) => {
         this.db = dbIndex;
-        console.log("INICIO BASE DE DATOS 2");
+        console.log("INICIO BASE DE DATOS EN JORNADA-SAE");
       })
       .catch((error: any) => {
         console.error('Error al inicializar la base de datos:', error);
@@ -29,11 +29,11 @@ export class TurnosaeIndexdbService {
     ngOnInit(): void { }
     
   
-    async guardarTurnosae(turnosae: TurnosaeModel): Promise<void> {
+    async guardarTurnosae(turnosae: TurnoSaeModel): Promise<void> {
       await this.db.add('jornada-sae', turnosae);
     }
 
-    async actualizarTurnosae(turno: TurnosaeModel): Promise<void> {
+    async actualizarTurnosae(turno: TurnoSaeModel): Promise<void> {
       await this.db.put('jornada-sae', turno);
     }
 
@@ -41,11 +41,11 @@ export class TurnosaeIndexdbService {
       await this.db.delete('jornada-sae', id);
     }
 
-    async getAllTurnosae(): Promise<TurnosaeModel[]> {
+    async getAllTurnosae(): Promise<TurnoSaeModel[]> {
       return await this.db.getAll('jornada-sae');
     }
 
-    async getTurnosae(id: number): Promise<TurnosaeModel | undefined> {
+    async getTurnosae(id: number): Promise<TurnoSaeModel | undefined> {
       return await this.db.get('jornada-sae', id);
     }
 

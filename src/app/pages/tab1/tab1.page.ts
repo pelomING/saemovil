@@ -5,10 +5,10 @@ import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
 
 import { IndexdbService } from '../../services/indexdb.service';
-import { TurnosaeIndexdbService } from '../../services/turnosae.indexdb.service';
-import { TurnosaeModel } from '../../models/turnosae.model';
+import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
+import { TurnoSaeModel } from '../../models/turno-sae.model';
 
-import { EventModel } from '../../interfaces/event.model';
+import { EventoSaeModel } from '../../interfaces/eventosae.model';
 import { Shift } from '../../interfaces/shift.model';
 import { Base } from '../../interfaces/base.model';
 
@@ -21,46 +21,47 @@ import { Base } from '../../interfaces/base.model';
 
 
 export class Tab1Page {
-  
-  events: EventModel[] = [];
-  ItemSelect: EventModel | undefined; // Variable de tipo EventModel
-  turnosae: TurnosaeModel = new TurnosaeModel();
+
+  events: EventoSaeModel[] = [];
+  ItemSelect: EventoSaeModel | undefined; // Variable de tipo EventModel
+
+  turnosae: TurnoSaeModel = new TurnoSaeModel();
   miFormulario: FormGroup;
 
   public db!: IDBPDatabase;
 
   constructor(
     private indexdbService: IndexdbService,
-    private turnosaeIndexdbService: TurnosaeIndexdbService,
+    private turnosaeIndexdbService: TurnoSaeIndexdbService,
     private formBuilder: FormBuilder,
     private toastController: ToastController
-    ) {
+  ) {
 
-      this.miFormulario = this.formBuilder.group({
-        id: [''], 
-        baseAsignada: ['', Validators.required],
-        rutMaestro: ['', Validators.required],
-        rutAyudante: ['', Validators.required],
-        kmInicial: ['', Validators.required],
-        patenteVehiculo: ['', Validators.required],
+    this.miFormulario = this.formBuilder.group({
+      id: [''],
+      baseAsignada: ['', Validators.required],
+      rutMaestro: ['', Validators.required],
+      rutAyudante: ['', Validators.required],
+      kmInicial: ['', Validators.required],
+      patenteVehiculo: ['', Validators.required],
+    });
+
+  }
+
+
+  ngOnInit(): void {
+
+    this.indexdbService.openDatabase()
+      .then((dbIndex) => {
+        this.db = dbIndex;
+        console.log("INICIO BASE DE DATOS");
+        this.ObtenerRegistrodeTurno();
+      })
+      .catch((error: any) => {
+        console.error('Error al inicializar la base de datos:', error);
       });
 
-    }
-
-
-    ngOnInit(): void {
-
-        this.indexdbService.openDatabase()
-        .then((dbIndex) => {
-          this.db = dbIndex;
-          console.log("INICIO BASE DE DATOS");
-          this.ObtenerRegistrodeTurno();
-        })
-        .catch((error: any) => {
-          console.error('Error al inicializar la base de datos:', error);
-        });
-
-    }
+  }
 
 
   ObtenerRegistrodeTurno() {
@@ -76,7 +77,7 @@ export class Tab1Page {
             baseAsignada: turno.baseAsignada,
             rutMaestro: turno.rutMaestro,
             rutAyudante: turno.rutAyudante,
-            kmInicial: turno.kmInicial, 
+            kmInicial: turno.kmInicial,
             patenteVehiculo: turno.patenteVehiculo
           });
         } else {
@@ -125,33 +126,33 @@ export class Tab1Page {
 
     if (this.miFormulario?.valid) {
 
-      const {id,baseAsignada,rutMaestro,rutAyudante, kmInicial, patenteVehiculo } = this.miFormulario.value;
-   
+      const { id, baseAsignada, rutMaestro, rutAyudante, kmInicial, patenteVehiculo } = this.miFormulario.value;
+
       console.log("Id del registro creado : ", id);
 
-      const turno: TurnosaeModel = new TurnosaeModel({
+      const turno: TurnoSaeModel = new TurnoSaeModel({
         baseAsignada,
         rutMaestro,
-        rutAyudante, 
-        kmInicial, 
+        rutAyudante,
+        kmInicial,
         patenteVehiculo,
         fechaSistema: new Date(),
         estadoEnvio: 0
       });
 
 
-      if(id > 0){
+      if (id > 0) {
 
         turno.id = id;
 
         // this.db.put('jornada-sae', turno);
         // console.log('Datos Actualizados en IndexDB:', turno);
-        
+
         this.turnosaeIndexdbService.actualizarTurnosae(turno).then(() => {
           console.log('Datos Actualizados en IndexDB:', turno);
         });
 
-      }else{
+      } else {
 
         // this.db.add('jornada-sae', turno);
         // console.log('Datos guardados en IndexDB:', turno);
@@ -165,14 +166,14 @@ export class Tab1Page {
       this.ObtenerRegistrodeTurno();
 
       // Llamar a la función para mostrar el mensaje emergente
-      await  this.presentToast('Los datos se guardaron con éxito');
+      await this.presentToast('Los datos se guardaron con éxito');
 
 
     } else {
-      
+
       console.log('Formulario inválido. Por favor, complete todos los campos.');
 
-      await  this.presentToast('Formulario inválido. Por favor, complete todos los campos.');
+      await this.presentToast('Formulario inválido. Por favor, complete todos los campos.');
 
     }
   }

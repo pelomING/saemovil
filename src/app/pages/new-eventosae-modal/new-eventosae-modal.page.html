@@ -1,0 +1,45 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      Agregar Evento
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="dismissModal()">
+        <ion-icon name="close"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" >
+
+  <ion-list>
+    
+    <ion-item>
+      <ion-label position="floating">Nombre del Evento</ion-label>
+      <ion-input [(ngModel)]="eventName" aria-label="Nombre del Evento" name="eventName" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Numero OT</ion-label>
+      <ion-input [(ngModel)]="eventOT" aria-label="Numero OT" name="eventOT" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Dirección</ion-label>
+      <ion-input [(ngModel)]="eventDireccion" aria-label="Direccion" name="eventDireccion" required></ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label position="floating">Motivo Evento</ion-label>
+      <ion-input [(ngModel)]="eventMotivo" aria-label="Motivo Evento" name="eventMotivo" required></ion-input>
+    </ion-item>
+
+    <!-- <ion-item>
+      <ion-input [(ngModel)]="eventDate" aria-label="Fecha del Evento" name="eventDate" type="date" required></ion-input>
+    </ion-item> -->
+
+    <ion-button expand="full" (click)="saveEvent()">Guardar Evento</ion-button>
+  </ion-list>
+  
+</ion-content>

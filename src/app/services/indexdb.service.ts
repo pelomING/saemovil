@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { openDB, IDBPDatabase, IDBPObjectStore } from 'idb';
 
-import { TurnosaeModel } from '../models/turnosae.model';
-import { EventModel } from '../interfaces/event.model';
+import { TurnoSaeModel } from '../models/turno-sae.model';
+import { EventoSaeModel } from '../interfaces/eventosae.model';
 import { Shift } from '../interfaces/shift.model';
 import { Base } from '../interfaces/base.model';
 
@@ -78,28 +78,29 @@ export class IndexdbService {
     //this.loadItemsFromIndexDB();
 
 
-  async addEvent(event: EventModel): Promise<void> {
-    await this.db.add('events', event);
-  }
+  // async addEvent(event: EventoSaeModel): Promise<void> {
+  //   await this.db.add('events', event);
+  // }
 
-  async addShift(shift: Shift): Promise<void> {
-    await this.db.add('shifts', shift);
-  }
+  // async addShift(shift: Shift): Promise<void> {
+  //   await this.db.add('shifts', shift);
+  // }
 
-  async addBase(base: Base): Promise<void> {
-    await this.db.add('bases', base);
-  }
+  // async addBase(base: Base): Promise<void> {
+  //   await this.db.add('bases', base);
+  // }
 
-  async getAllEvents(): Promise<EventModel[]> {
-    return await this.db.getAll('events');
-  }
+  // async getAllEvents(): Promise<EventoSaeModel[]> {
+  //   return await this.db.getAll('events');
+  // }
 
-  async getAllShifts(): Promise<any[]> {
-    return await this.db.getAll('shifts');
-  }
+  // async getAllShifts(): Promise<any[]> {
+  //   return await this.db.getAll('shifts');
+  // }
 
-  async getAllBases(): Promise<any[]> {
-    return await this.db.getAll('bases');
-  }
+  // async getAllBases(): Promise<any[]> {
+  //   return await this.db.getAll('bases');
+  // }
+
 
 }

@@ -1,4 +1,4 @@
-export interface EventModel {
+export interface EventoSaeModel {
     id: number;
     name: string;
     date: string;

@@ -16,6 +16,14 @@ const routes: Routes = [
     path: '',
     pathMatch: 'full',
     redirectTo: 'main/tabs/tab1'
+  },
+  {
+    path: 'new-eventosae-modal',
+    loadChildren: () => import('./pages/new-eventosae-modal/new-eventosae-modal.module').then( m => m.NewEventosaeModalPageModule)
+  },
+  {
+    path: 'message/:id',
+    loadChildren: () => import('./pages/view-eventosae/view-eventosae.module').then( m => m.ViewEventosaePageModule)
   }
 ];
 
