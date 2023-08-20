@@ -17,7 +17,7 @@ export class IndexdbService {
   private dbVersion = 1;
   public db!: IDBPDatabase;
 
-  constructor() {}
+  constructor() {  }
 
   ngOnInit(): void {
     this.openDatabase();
@@ -26,38 +26,69 @@ export class IndexdbService {
   async openDatabase() {
     return await openDB(this.dbName, this.dbVersion, {
       upgrade(db, oldVersion, newVersion, transaction) {
-        
+
         if (!db.objectStoreNames.contains('eventos-sae')) {
           const store = db.createObjectStore('eventos-sae', { keyPath: 'id', autoIncrement: true });
-        } 
+        }
 
-        if (!db.objectStoreNames.contains('jornada-sae')) {
+        if (!db.objectStoreNames.contains('turnos-sae')) {
           const store = db.createObjectStore('jornada-sae', { keyPath: 'id', autoIncrement: true });
         }
+
 
         if (!db.objectStoreNames.contains('turnos')) {
           db.createObjectStore('turnos', { keyPath: 'id', autoIncrement: true });
         }
 
-        if (!db.objectStoreNames.contains('tipo-eventos')) {
-          db.createObjectStore('tipo-eventos', { keyPath: 'id', autoIncrement: true });
+        if (!db.objectStoreNames.contains('eventos')) {
+          db.createObjectStore('eventos', { keyPath: 'id', autoIncrement: true });
         }
 
         if (!db.objectStoreNames.contains('ayudantes')) {
           db.createObjectStore('ayudantes', { keyPath: 'id', autoIncrement: true });
         }
 
-        if (!db.objectStoreNames.contains('camionetas')) {
-          db.createObjectStore('camionetas', { keyPath: 'id', autoIncrement: true });
+        if (!db.objectStoreNames.contains('vehiculos')) {
+          db.createObjectStore('vehiculos', { keyPath: 'id', autoIncrement: true });
         }
 
         if (!db.objectStoreNames.contains('oficinas')) {
           db.createObjectStore('oficinas', { keyPath: 'id', autoIncrement: true });
         }
-        
+
+
       },
     });
   }
+
+
+
+
+
+async clearTableInIndexedDB(tableName: string) {
+  
+  const db = await openDB('saemovil', 1);
+
+  if (db.objectStoreNames.contains(tableName)) {
+
+    const transaction = db.transaction(tableName, 'readwrite');
+    
+    const store = transaction.objectStore(tableName);
+
+    store.clear();
+
+    await transaction.commit;
+
+    transaction.oncomplete = () => {
+      console.log(`Tabla ${tableName} borrada exitosamente.`);
+    };
+
+  } else {
+    console.log(`La tabla ${tableName} no existe en la base de datos.`);
+  }
+}
+
+
 
 
     // Ejemplo de cómo agregar registros
@@ -74,7 +105,7 @@ export class IndexdbService {
 
     // const newBase: Base = { id: 1, name: 'Base A', location: 'Ubicación A' };
     // this.indexdbService.addBase(newBase);
-  
+
     //this.loadItemsFromIndexDB();
 
 

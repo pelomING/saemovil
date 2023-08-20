@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-//import { Storage } from '@ionic/storage';
-
+import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
+import { IDBPDatabase } from 'idb';
 
 import { environment } from '../../environments/environment';
-import { Usuario } from '../interfaces/interfaces';
-import { NavController } from '@ionic/angular';
+import { Usuario, Ayudante, Evento, Oficina, Turno, Vehiculo } from '../interfaces/interfaces';
+import { IndexdbService } from './indexdb.service'
 
 const URL = environment.url;
 
@@ -17,11 +16,31 @@ const URL = environment.url;
 export class UsuarioService {
 
  token: string = '';
+ public db!: IDBPDatabase;
+ 
  private usuario: Usuario = {};
+
+//  private ayudante: Ayudante = {};
+//  private evento: Evento = {};
+//  private oficina: Oficina = {};
+//  private turno: Turno = {};
+//  private vehiculo: Vehiculo = {};
+
 
   constructor( private http: HttpClient,
                private storage: Storage,
-               private navCtrl: NavController ) { 
+               private navCtrl: NavController,
+               private indexdbService: IndexdbService 
+               ) { 
+
+                this.indexdbService.openDatabase()
+                .then((dbIndex) => {
+                  this.db = dbIndex;
+                  console.log("INICIO BASE DE DATOS EN EVENTOS-SAE");
+                })
+                .catch((error: any) => {
+                  console.error('Error al inicializar la base de datos:', error);
+                });
 
                }
 
@@ -54,6 +73,13 @@ export class UsuarioService {
           if ( resp.token ) {
             this.initStorage();
             await this.guardarToken( resp.token );
+
+              await this.getObjetoParaSelects('ayudantes');
+              await this.getObjetoParaSelects('eventos');
+              await this.getObjetoParaSelects('oficinas');
+              await this.getObjetoParaSelects('turnos');
+              await this.getObjetoParaSelects('vehiculos');
+             
             resolve(true);
           } else {
             this.token = '';
@@ -163,7 +189,7 @@ export class UsuarioService {
 
 
 
-  async getAyudantes(): Promise<boolean> {
+  async getObjetoParaSelects(tablaApi: string): Promise<boolean> {
 
     await this.cargarToken();
 
@@ -178,21 +204,60 @@ export class UsuarioService {
         'Authorization': `Bearer ${this.token}`
       });
 
-
-      //https://backend-saemovil-production.up.railway.app/ayudantes/find-all
-
-
-      this.http.get(`${ URL }/ayudantes/find-all`, { observe: 'response',headers }).subscribe( 
+      this.http.get(`${URL}/${tablaApi}/find-all`, { observe: 'response',headers }).subscribe( 
         async (response: any) => {
 
-          console.log("listado ayudantes");
+          console.log('Trabajando en la tabla:', tablaApi);
 
-          console.log('Tipo de respuesta:', typeof response.body);
           console.log('Contenido de la respuesta:', response.body);
+
           const resp = response.body;
 
           if ( response ) {
-            //await this.guardarToken( resp.token );
+
+           await this.indexdbService.clearTableInIndexedDB(tablaApi);
+            
+            for (const objeto of resp) 
+            {
+
+              let dataToAdd: any;
+
+              if (tablaApi === 'ayudantes') {
+                dataToAdd = {
+                  nombre: objeto.nombre,
+                  rut_ayudante: objeto.rut_ayudante
+                };
+              } else if (tablaApi === 'eventos') {
+                dataToAdd = {
+                  codigo: objeto.codigo,
+                  descripcion: objeto.descripcion
+                };
+              } else if (tablaApi === 'oficinas') {
+                dataToAdd = {
+                  codigo: objeto.codigo,
+                  nombre: objeto.nombre
+                };
+              } else if (tablaApi === 'turnos') {
+                dataToAdd = {
+                  codigo: objeto.codigo,
+                  horario: objeto.horario
+                };
+              } else if (tablaApi === 'vehiculos') {
+                dataToAdd = {
+                  marca: objeto.marca,
+                  patente: objeto.patente
+                };
+              }
+
+              if (dataToAdd) {
+                await this.db.add(tablaApi, dataToAdd);
+                console.log(`Objeto agregado a la tabla ${tablaApi}:`, dataToAdd);
+              } else {
+                console.log(`No se pudo agregar el objeto a la tabla ${tablaApi}`);
+              }
+              
+            }
+
             resolve(true);
           } else {
             //this.token = '';
@@ -208,7 +273,7 @@ export class UsuarioService {
 
 
 
-  actualizarUsuario( usuario: Usuario ) {
+  actualizarUsuario( _usuario: Usuario ) {
 
     // const headers = new HttpHeaders({
     //   'x-token': this.token
