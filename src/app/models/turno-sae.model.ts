@@ -1,11 +1,15 @@
 export class TurnoSaeModel {
 
   id?: number;
-  baseAsignada?: string;
-  rutMaestro?: string;
-  rutAyudante?: string;
-  kmInicial?: number;
-  patenteVehiculo?: string;
+  rut_maestro?: string;
+  rut_ayudante?: string;
+  codigo_turno?: string;
+  patente_vehiculo?: string;
+  codigo_oficina?: string;
+  km_inicia?: string;
+  km_final?: string;
+  fecha_hora_inicio?: Date;
+  fecha_hora_final?: Date;
   fechaSistema?: Date;
   estadoEnvio?: number;
 

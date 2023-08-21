@@ -23,6 +23,7 @@ export class IndexdbService {
     this.openDatabase();
   }
 
+
   async openDatabase() {
     return await openDB(this.dbName, this.dbVersion, {
       upgrade(db, oldVersion, newVersion, transaction) {
@@ -32,9 +33,8 @@ export class IndexdbService {
         }
 
         if (!db.objectStoreNames.contains('turnos-sae')) {
-          const store = db.createObjectStore('jornada-sae', { keyPath: 'id', autoIncrement: true });
+          const store = db.createObjectStore('turnos-sae', { keyPath: 'id', autoIncrement: true });
         }
-
 
         if (!db.objectStoreNames.contains('turnos')) {
           db.createObjectStore('turnos', { keyPath: 'id', autoIncrement: true });
@@ -56,82 +56,65 @@ export class IndexdbService {
           db.createObjectStore('oficinas', { keyPath: 'id', autoIncrement: true });
         }
 
-
       },
     });
   }
 
 
-
-
-
-async clearTableInIndexedDB(tableName: string) {
-  
-  const db = await openDB('saemovil', 1);
-
-  if (db.objectStoreNames.contains(tableName)) {
-
-    const transaction = db.transaction(tableName, 'readwrite');
+  async clearTableInIndexedDB(tableName: string) {
     
-    const store = transaction.objectStore(tableName);
+    const db = await openDB('saemovil', 1);
 
-    store.clear();
+    if (db.objectStoreNames.contains(tableName)) {
 
-    await transaction.commit;
+      const transaction = db.transaction(tableName, 'readwrite');
+      
+      const store = transaction.objectStore(tableName);
 
-    transaction.oncomplete = () => {
-      console.log(`Tabla ${tableName} borrada exitosamente.`);
-    };
+      store.clear();
 
-  } else {
-    console.log(`La tabla ${tableName} no existe en la base de datos.`);
+      await transaction.commit;
+
+      transaction.oncomplete = () => {
+        console.log(`Tabla ${tableName} borrada exitosamente.`);
+      };
+
+    } else {
+      console.log(`La tabla ${tableName} no existe en la base de datos.`);
+    }
   }
-}
 
 
+  async getAllAyudantes(): Promise<any[]> {
+    const db = await openDB('saemovil', 1);
+    return await db.getAll('ayudantes');
+  }
 
+  async getAllEventos(): Promise<any[]> {
+    return await this.db.getAll('eventos');
+  }
 
-    // Ejemplo de cómo agregar registros
-    // const newEvent1: EventModel = { id: 1, name: 'Evento 1', date: '2023-07-01' };
-    // const newEvent2: EventModel = { id: 2, name: 'Evento 2', date: '2023-07-02' };
-    // const newEvent3: EventModel = { id: 3, name: 'Evento 3', date: '2023-07-03' };
+  async getAllOficinas(): Promise<any[]> {
+    return await this.db.getAll('oficinas');
+  }
 
-    // this.indexdbService.addEvent(newEvent1);
-    // this.indexdbService.addEvent(newEvent2);
-    // this.indexdbService.addEvent(newEvent3);
+  async getAllTurnos(): Promise<any[]> {
+    return await this.db.getAll('turnos');
+  }
 
-    // const newShift: Shift = { id: 1, startTime: '09:00 AM', endTime: '05:00 PM' };
-    // this.indexdbService.addShift(newShift);
+  async getAllVehiculos(): Promise<any[]> {
+    return await this.db.getAll('vehiculos');
+  }
 
-    // const newBase: Base = { id: 1, name: 'Base A', location: 'Ubicación A' };
-    // this.indexdbService.addBase(newBase);
-
-    //this.loadItemsFromIndexDB();
-
-
-  // async addEvent(event: EventoSaeModel): Promise<void> {
-  //   await this.db.add('events', event);
-  // }
-
-  // async addShift(shift: Shift): Promise<void> {
-  //   await this.db.add('shifts', shift);
-  // }
-
-  // async addBase(base: Base): Promise<void> {
-  //   await this.db.add('bases', base);
-  // }
-
-  // async getAllEvents(): Promise<EventoSaeModel[]> {
-  //   return await this.db.getAll('events');
-  // }
-
-  // async getAllShifts(): Promise<any[]> {
-  //   return await this.db.getAll('shifts');
-  // }
-
-  // async getAllBases(): Promise<any[]> {
-  //   return await this.db.getAll('bases');
-  // }
+  async getAllFromIndex(tableName: string): Promise<any[]> {
+    try {
+      const db = await openDB('saemovil', 1);
+      const data = await db.getAll(tableName);
+      return data ? Object.values(data) : [];
+    } catch (error) {
+      throw error;
+    }
+  }
 
 
 }

@@ -6,53 +6,53 @@
   </ion-toolbar>
 </ion-header>
 
-  <!-- <ion-item>
-    <ion-label position="stacked" >Selecciona un elemento:</ion-label>
-    <ion-select [(ngModel)]="ItemSelect" aria-label="Selecciona un elemento:" >
-      <ion-select-option *ngFor="let event of events" [value]="event.id">{{ event.name }}</ion-select-option>
-    </ion-select>
-  </ion-item>
-
-  <ion-button expand="full" (click)="showSelectedItem()">Mostrar Seleccionado</ion-button> -->
 
   <ion-content [fullscreen]="true" class="ion-padding" >
     <ion-card>
 
       <ion-card-content>
       
+        <!-- <ion-button expand="full" (click)="showSelectedItem()">Mostrar Seleccionado</ion-button> -->
+      
         <form [formGroup]="miFormulario">
           
           <ion-item>
-            <ion-label position="stacked">Oficina Base:</ion-label>
-            <ion-input type="text" formControlName="baseAsignada" aria-label="Base Asignada:" ></ion-input>
+            <ion-label position="stacked" >Oficina:</ion-label>
+            <ion-select formControlName="codigo_oficina" aria-label=">Oficina:" >
+              <ion-select-option *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{ oficina.nombre }}</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-label position="stacked" >Turno:</ion-label>
+            <ion-select formControlName="codigo_turno" aria-label="Turno:" >
+              <ion-select-option *ngFor="let turno of listaTurnos" [value]="turno.codigo">{{ turno.horario }}</ion-select-option>
+            </ion-select>
           </ion-item>
           
           <ion-item>
-            <ion-label position="stacked" >RUT Maestro:</ion-label>
-            <ion-input type="text" formControlName="rutMaestro" aria-label="RUT Maestro"></ion-input>
+            <ion-label position="stacked" >Vehiculo:</ion-label>
+            <ion-select formControlName="patente_vehiculo" aria-label="Vehiculo:" >
+              <ion-select-option *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.marca">{{ vehiculo.patente }}</ion-select-option>
+            </ion-select>
           </ion-item>
-      
+          
           <ion-item>
-            <ion-label position="stacked" >RUT Ayudante:</ion-label>
-            <ion-input type="text" formControlName="rutAyudante" aria-label="RUT Ayudante"></ion-input>
+            <ion-label position="stacked" >Ayudante:</ion-label>
+            <ion-select formControlName="rut_ayudante" aria-label="Ayudante:" >
+              <ion-select-option *ngFor="let ayudante of listaAyudantes" [value]="ayudante.rut_ayudante">{{ ayudante.nombre }}</ion-select-option>
+            </ion-select>
           </ion-item>
-      
+
           <ion-item>
             <ion-label position="stacked">KM Inicial:</ion-label>
-            <ion-input type="number" formControlName="kmInicial" aria-label="KM Inicial"></ion-input>
-          </ion-item>
-      
-          <ion-item>
-            <ion-label position="stacked">Patente Vehículo:</ion-label>
-            <ion-input type="text" formControlName="patenteVehiculo" aria-label="Patente Vehículo"></ion-input>
-          </ion-item>
-      
+            <ion-input type="number" formControlName="km_inicia" aria-label="KM Inicial"></ion-input>
+          </ion-item>     
           
           <hr/>
           <br>
            
           <ion-button expand="full" color="primary" class="bottom-button" (click)="guardarInicioTurno()">Guardar</ion-button>
-     
 
           <!-- <ion-item> -->
             <!-- <ion-label position="stacked">Id:</ion-label> -->

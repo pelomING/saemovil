@@ -71,14 +71,16 @@ export class UsuarioService {
           const resp = response.body;
 
           if ( resp.token ) {
+            
             this.initStorage();
+
             await this.guardarToken( resp.token );
 
-              await this.getObjetoParaSelects('ayudantes');
-              await this.getObjetoParaSelects('eventos');
-              await this.getObjetoParaSelects('oficinas');
-              await this.getObjetoParaSelects('turnos');
-              await this.getObjetoParaSelects('vehiculos');
+            await this.getObjetoParaSelects('ayudantes');
+            await this.getObjetoParaSelects('eventos');
+            await this.getObjetoParaSelects('oficinas');
+            await this.getObjetoParaSelects('turnos');
+            await this.getObjetoParaSelects('vehiculos');
              
             resolve(true);
           } else {
