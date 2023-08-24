@@ -17,9 +17,10 @@
             }}</ion-select-option>
         </ion-select> -->
 
-        <ion-select formControlName="codigo_oficina" readonly="true" label="Oficina" [disabled]="true" label-placement="floating"
-          fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{ oficina.nombre
+        <ion-select formControlName="codigo_oficina" readonly="true" label="Oficina" [disabled]="true"
+          label-placement="floating" fill="solid">
+          <ion-select-option [disabled]="true" *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{
+            oficina.nombre
             }}</ion-select-option>
         </ion-select>
 
@@ -33,14 +34,16 @@
         <br>
 
         <ion-select formControlName="patente_vehiculo" label="Vehiculo" label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.marca">{{ vehiculo.patente
+          <ion-select-option [disabled]="true" *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.patente">{{
+            vehiculo.patente
             }}</ion-select-option>
         </ion-select>
 
         <br>
 
         <ion-select formControlName="rut_ayudante" label="Ayudante" label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let ayudante of listaAyudantes" [value]="ayudante.rut_ayudante">{{
+          <ion-select-option [disabled]="true" *ngFor="let ayudante of listaAyudantes"
+            [value]="ayudante.rut_ayudante">{{
             ayudante.nombre
             }}</ion-select-option>
         </ion-select>
@@ -57,8 +60,11 @@
 
         <br>
 
-        <ion-button expand="full" color="primary" class="bottom-button"
-          (click)="guardarInicioTurno()">Enviar</ion-button>
+        <ion-button expand="full" color="primary" class="bottom-button" (click)="guardarFinTurno()">Guardar</ion-button>
+
+        <br>
+
+        <ion-button expand="full" color="primary" class="bottom-button" (click)="enviarTurnoaMongoDb()">Enviar</ion-button>
 
         <!-- <ion-item> -->
         <!-- <ion-label position="stacked">Id:</ion-label> -->

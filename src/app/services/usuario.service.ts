@@ -80,6 +80,9 @@ export class UsuarioService {
 
             await this.guardarUser( resp.user.rut );
             
+            await this.indexdbService.clearTableInIndexedDB('eventos-sae');
+            await this.indexdbService.clearTableInIndexedDB('turnos-sae');
+            
             await this.getObjetoParaSelects('ayudantes');
             await this.getObjetoParaSelects('eventos');
             await this.getObjetoParaSelects('oficinas');
@@ -107,7 +110,7 @@ export class UsuarioService {
 
   logout() {
     this.token   = '';
-    this.usuario = {};
+    this.rut_user = '';
     this.storage.clear();
     this.navCtrl.navigateRoot('/login', { animated: true });
   }

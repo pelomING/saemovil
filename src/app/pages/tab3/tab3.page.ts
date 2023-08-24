@@ -1,11 +1,17 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
 
+import { UiServiceService } from '../../services/ui-service.service';
+import { NavController } from '@ionic/angular';
+
+import { UsuarioService } from '../../services/usuario.service';
 import { IndexdbService } from '../../services/indexdb.service';
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
+
+import { TurnoSaeService } from '../../services/turnosae.service'
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 
 import { Ayudante, Oficina, Vehiculo, Turno } from '../../interfaces/interfaces';
@@ -27,8 +33,13 @@ export class Tab3Page {
   public miFormulario: FormGroup;
   public db!: IDBPDatabase;
 
+  private turnoSaeService = inject(TurnoSaeService);
+
   constructor(private indexdbService: IndexdbService,
+    public navCtrl: NavController,
+    private usuarioService: UsuarioService,
     private turnosaeIndexdbService: TurnoSaeIndexdbService,
+    private uiService: UiServiceService,
     private formBuilder: FormBuilder,
     private toastController: ToastController) {
 
@@ -49,9 +60,12 @@ export class Tab3Page {
     this.indexdbService.openDatabase()
       .then((dbIndex) => {
         this.db = dbIndex;
-        console.log("INICIO BASE DE DATOS");
-        this.ObtenerRegistrodeTurno();
+        console.log("Cargar turno sae");
+
         this.loadItemsFromIndexDB();
+
+        this.ObtenerRegistrodeTurno();
+
       })
       .catch((error: any) => {
         console.error('Error al inicializar la base de datos:', error);
@@ -60,12 +74,12 @@ export class Tab3Page {
   }
 
 
-  ObtenerRegistrodeTurno() {
+  async ObtenerRegistrodeTurno() {
 
     // Asumiendo que tienes el ID del turno que deseas obtener
     const turnoId = 1;
 
-    this.turnosaeIndexdbService.getTurnosae(turnoId)
+    await this.turnosaeIndexdbService.getTurnosae(turnoId)
       .then((turno_sae) => {
 
         if (turno_sae) {
@@ -101,18 +115,19 @@ export class Tab3Page {
 
 
   async loadItemsFromIndexDB() {
+
     const tableNames = ['ayudantes', 'oficinas', 'vehiculos', 'turnos'];
 
     for (const tableName of tableNames) {
       await this.loadItems(tableName);
     }
+
   }
 
 
   async loadItems(tableName: string) {
     try {
       const items = await this.indexdbService.getAllFromIndex(tableName);
-      console.log("Items", items);
       this.assignItemsToList(tableName, items);
       console.log(`${tableName} obtenidos:`, items);
     } catch (error) {
@@ -128,7 +143,6 @@ export class Tab3Page {
         break;
       case 'oficinas':
         this.listaOficinas = items;
-        console.log("cargar datos en oficina", this.listaOficinas);
         break;
       case 'vehiculos':
         this.listaVehiculos = items;
@@ -141,50 +155,34 @@ export class Tab3Page {
   }
 
 
-  async guardarInicioTurno() {
+  async guardarFinTurno() {
 
     if (this.miFormulario?.valid) {
 
-      const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia, km_final } = this.miFormulario.value;
+      const { id, km_final } = this.miFormulario.value;
+
       console.log("Id del registro creado : ", id);
 
-      const turno_sae: TurnoSaeModel = new TurnoSaeModel({
-        rut_maestro: '1',
-        rut_ayudante,
-        codigo_turno,
-        patente_vehiculo,
-        codigo_oficina,
-        km_inicia,
-        km_final,
-        //fecha_hora_inicio: new Date(),
-        fecha_hora_final: new Date(),
-        //fechaSistema: new Date(),
-        //estadoEnvio: 0
-      });
+      let turnosae = await this.turnosaeIndexdbService.getTurnosae(id);
 
-      if (id > 0) {
+      console.log("Turno", turnosae);
 
-        turno_sae.id = id;
-        // this.db.put('jornada-sae', turno);
-        // console.log('Datos Actualizados en IndexDB:', turno);
-        this.turnosaeIndexdbService.actualizarTurnosae(turno_sae).then(() => {
-          console.log('Datos Actualizados en IndexDB:', turno_sae);
-        });
+      turnosae!.km_final = km_final;
+      turnosae!.fecha_hora_final = new Date();
 
-      } else {
+      if (turnosae) {
 
-        // this.db.add('jornada-sae', turno);
-        // console.log('Datos guardados en IndexDB:', turno);
-        this.turnosaeIndexdbService.guardarTurnosae(turno_sae).then(() => {
-          console.log('Datos guardados en IndexDB:', turno_sae);
+        console.log('Datos Actualizados en IndexDB:', turnosae);
+
+        this.turnosaeIndexdbService.actualizarTurnosae(turnosae).then(() => {
+          console.log('Datos Actualizados en IndexDB:', turnosae);
         });
 
       }
 
       this.ObtenerRegistrodeTurno();
-
       // Llamar a la función para mostrar el mensaje emergente
-      await this.presentToast('Los datos se guardaron con éxito');
+      await this.presentToast('Los datos fueron actualizados');
 
     } else {
 
@@ -195,5 +193,69 @@ export class Tab3Page {
   }
 
 
+
+  async enviarTurnoaMongoDb() {
+
+    let data = this.turnosae;
+
+    if (this.miFormulario?.valid) {
+
+      const { id } = this.miFormulario.value;
+
+      console.log("Id del registro creado turno : ", id);
+
+      await this.turnosaeIndexdbService.getTurnosae(id)
+        .then((turno_sae) => {
+
+          if (turno_sae) {
+
+            data = {
+              rut_maestro: turno_sae.rut_maestro,
+              codigo_turno: turno_sae.codigo_turno,
+              rut_ayudante: turno_sae.rut_ayudante,
+              patente_vehiculo: turno_sae.patente_vehiculo,
+              km_inicia: turno_sae.km_inicia!.toString(),
+              km_final: turno_sae.km_final!.toString(),
+              codigo_oficina: turno_sae.codigo_oficina,
+              fecha_hora_inicio: turno_sae.fecha_hora_inicio,
+              fecha_hora_final: turno_sae.fecha_hora_final
+            };
+
+          } else {
+            console.log(`No se encontró el turno con ID ${id}`);
+          }
+
+        })
+        .catch((error) => {
+          console.error('Error al obtener el turno:', error);
+        });
+
+      console.log("DATA", data);
+      console.log("Enviando Datos desde Turno");
+
+      const valido = await this.turnoSaeService.EnviarTurno(data);
+
+      console.log("VALIDO", valido);
+
+      if (valido) {
+        
+        this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
+        this.usuarioService.logout();
+
+      }
+
+      if (valido == false) {
+        // mostrar alerta de usuario y contraseña no correctos
+        this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
+      }
+
+    } else {
+
+      console.log('Formulario inválido. Por favor, complete todos los campos.');
+      await this.presentToast('Formulario inválido.');
+
+    }
+
+  }
 
 }

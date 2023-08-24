@@ -52,7 +52,8 @@ export class IndexdbService {
         }
 
         if (!db.objectStoreNames.contains('vehiculos')) {
-          db.createObjectStore('vehiculos', { keyPath: 'id', autoIncrement: true });
+          const store = db.createObjectStore('vehiculos', { keyPath: 'id', autoIncrement: true });
+          store.createIndex('indexPatente', 'patente');
         }
 
         if (!db.objectStoreNames.contains('oficinas')) {
@@ -107,6 +108,7 @@ export class IndexdbService {
     const db = await openDB('saemovil', 1);
     return db.getFromIndex('eventos', 'indexCodigo', codigo)
   }
+
 
 
   // async getTipoEventoByCampo(campoBusqueda: string, valorBusqueda: any): Promise<Evento | undefined> {
