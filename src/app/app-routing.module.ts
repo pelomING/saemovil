@@ -15,14 +15,17 @@ const routes: Routes = [
   {
     path: '',
     pathMatch: 'full',
+    canLoad: [AuthGuard],
     redirectTo: 'main/tabs/tab1'
   },
   {
     path: 'new-eventosae-modal',
+    canLoad: [AuthGuard],
     loadChildren: () => import('./pages/new-eventosae-modal/new-eventosae-modal.module').then( m => m.NewEventosaeModalPageModule)
   },
   {
     path: 'eventosae/:id',
+    canLoad: [AuthGuard],
     loadChildren: () => import('./pages/view-eventosae/view-eventosae.module').then( m => m.ViewEventosaePageModule)
   }
 ];

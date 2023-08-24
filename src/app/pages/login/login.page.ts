@@ -12,25 +12,26 @@ import { Usuario } from '../../interfaces/interfaces';
   templateUrl: './login.page.html',
   styleUrls: ['./login.page.scss'],
 })
-export class LoginPage  {
+export class LoginPage {
 
   loginUser = {
-    rut: '14620209-8',
-    password: '14620209-8'
+    rut:'12345234-7',
+    password:'12345234-7'
   };
-
+ 
   constructor(private usuarioService: UsuarioService,
-              private navCtrl: NavController,
-              private uiService: UiServiceService) { 
+    private navCtrl: NavController,
+    private uiService: UiServiceService) {
 
-                this.initialize();
+    this.initialize();
 
-              }
+  }
 
   async initialize() {
+
     console.log("Inicio login");
     await this.usuarioService.cargarToken();
-  
+
     if (this.usuarioService.token) {
       console.log("Obtengo el Token");
       this.navCtrl.navigateRoot('/main/tabs/tab1');
@@ -40,30 +41,30 @@ export class LoginPage  {
 
   showPassword = false;
 
-toggleShowPassword() {
-  this.showPassword = !this.showPassword;
-}
+  toggleShowPassword() {
+    this.showPassword = !this.showPassword;
+  }
 
 
 
-  async login( fLogin: NgForm ) {
+  async login(fLogin: NgForm) {
 
-    if ( fLogin.invalid ) { return; }
+    if (fLogin.invalid) { return; }
 
-    const valido = await this.usuarioService.login( this.loginUser.rut, this.loginUser.password );
+    const valido = await this.usuarioService.login(this.loginUser.rut, this.loginUser.password);
 
-    if ( valido ) {
+    if (valido) {
 
       //await this.usuarioService.cargarToken();
       //const ayudantes = await this.usuarioService.getAyudantes();
       // navegar al tabs
-      this.navCtrl.navigateRoot( '/main/tabs/tab1', { animated: true } );
+      this.navCtrl.navigateRoot('/main/tabs/tab1', { animated: true });
 
     } else {
 
       // mostrar alerta de usuario y contraseña no correctos
-      this.uiService.alertaInformativa('Usuario y contraseña no son correctos.');
-    
+      this.uiService.alertaInformativa('Usuario y contraseña no son correctos. o no es posible conectar con el servidor');
+
     }
 
   }

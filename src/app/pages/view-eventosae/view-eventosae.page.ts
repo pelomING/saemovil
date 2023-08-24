@@ -1,12 +1,18 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+
+import { ChangeDetectorRef ,Component, inject, OnInit } from '@angular/core';
+
 import { ActivatedRoute } from '@angular/router';
-import { IonicModule, Platform } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
+import { format } from 'date-fns';
+import { NavController } from '@ionic/angular';
+import { UiServiceService } from '../../services/ui-service.service';
 
 import { IndexdbService } from '../../services/indexdb.service';
 import { EventoSaeIndexdbService } from '../../services/evento-sae.indexdb.service';
-import { EventoSaeModel } from '../../interfaces/eventosae.model'
 
+import { EventoSaeService } from '../../services/eventosae.service'
+import { EventoSaeModel } from 'src/app/models/evento-sae.model';
 
 @Component({
   selector: 'app-view-eventosae',
@@ -17,14 +23,26 @@ import { EventoSaeModel } from '../../interfaces/eventosae.model'
 export class ViewEventosaePage implements OnInit {
 
   public eventosae!: EventoSaeModel;
+  public tipo_evento : string | undefined;
 
   private activatedRoute = inject(ActivatedRoute);
   private platform = inject(Platform);
   private indexDBService = inject(IndexdbService);
   private eventoSaeIndexdb = inject(EventoSaeIndexdbService);
+  private eventoSaeService = inject(EventoSaeService);
 
-  constructor() { }
-  
+
+  isIos() {
+    return this.platform.is('ios')
+  }
+
+
+  constructor( public navCtrl: NavController,
+               private uiService: UiServiceService,
+               private cdr: ChangeDetectorRef,
+               private route: ActivatedRoute,) { }
+
+
   ngOnInit(): void {
     this.indexDBService.openDatabase()
       .then(() => this.buscarEventoforId())
@@ -33,12 +51,28 @@ export class ViewEventosaePage implements OnInit {
       });
   }
 
+
+  buscarTipoEvento(codigo: string): void {
+    
+     //this.indexDBService.getTipoEvento(parseInt(id, 10))
+
+      this.indexDBService.getTipoEventoByCodigo(codigo)
+      .then(event => {
+          this.tipo_evento = event!.codigo;
+      })
+      .catch(error => {
+        console.error('Error al obtener los eventos:', error);
+      });
+  }
+
+
   buscarEventoforId(): void {
     const id = this.activatedRoute.snapshot.paramMap.get('id') as string;
     console.log('Buscar : ', id);
-      this.eventoSaeIndexdb.getEventoSae(parseInt(id, 10))
+    this.eventoSaeIndexdb.getEventoSae(parseInt(id, 10))
       .then(event => {
         this.eventosae = event;
+        this.buscarTipoEvento(this.eventosae.tipo_evento);
         console.log('Registro encontrado :', event);
       })
       .catch(error => {
@@ -46,9 +80,47 @@ export class ViewEventosaePage implements OnInit {
       });
   }
 
+  
   getBackButtonText() {
     const isIos = this.platform.is('ios')
     return isIos ? 'Inbox' : '';
+  }
+
+
+  goToPaginaPrincipal() {
+    this.navCtrl.navigateForward(['/main/tabs/tab2'], {
+      queryParams: { fromDetallePage: true },
+    });
+  }
+
+
+  formatearFecha(fecha: Date): string {
+    return format(fecha, 'dd/MM/yyyy HH:mm'); // Puedes ajustar el formato según tus necesidades
+  }
+
+
+  async enviarEventoaMongoDb(){
+
+    console.log("Enviando Datos desde Evento");
+    const valido = await this.eventoSaeService.EnviarEvento(this.eventosae);
+    console.log("VALIDO",valido);
+
+    if (valido) {
+
+        this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
+
+        // navegar al tabs
+        this.navCtrl.navigateBack('/main/tabs/tab2', { animated: true });
+
+    } 
+    
+    if(valido == false) {
+
+        // mostrar alerta de usuario y contraseña no correctos
+        this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
+    
+    }
+
   }
 
 }

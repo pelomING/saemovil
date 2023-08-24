@@ -1,17 +1,78 @@
-<ion-header [translucent]="true">
+<ion-header>
   <ion-toolbar>
     <ion-title>
-      Tab 3
+      Finalizar Turno
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">Tab 3</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
-  <app-explore-container name="Tab 3 page"></app-explore-container>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="miFormulario">
+
+        <!-- <ion-select formControlName="codigo_oficina" label="Oficina" disable="true" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{ oficina.nombre
+            }}</ion-select-option>
+        </ion-select> -->
+
+        <ion-select formControlName="codigo_oficina" readonly="true" label="Oficina" [disabled]="true" label-placement="floating"
+          fill="solid">
+          <ion-select-option [disabled]="true" *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{ oficina.nombre
+            }}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <ion-select formControlName="codigo_turno" label="Turno" label-placement="floating" fill="solid">
+          <ion-select-option [disabled]="true" *ngFor="let turno of listaTurnos" [value]="turno.codigo">{{ turno.horario
+            }}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <ion-select formControlName="patente_vehiculo" label="Vehiculo" label-placement="floating" fill="solid">
+          <ion-select-option [disabled]="true" *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.marca">{{ vehiculo.patente
+            }}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <ion-select formControlName="rut_ayudante" label="Ayudante" label-placement="floating" fill="solid">
+          <ion-select-option [disabled]="true" *ngFor="let ayudante of listaAyudantes" [value]="ayudante.rut_ayudante">{{
+            ayudante.nombre
+            }}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <ion-input type="text" readonly="true" formControlName="km_inicia" label="KM Inicial" label-placement="floating"
+          fill="solid" placeholder=""></ion-input>
+
+        <br>
+
+        <ion-input type="number" formControlName="km_final" label="KM Final" label-placement="floating" fill="outline"
+          placeholder="Ingresar km final"></ion-input>
+
+        <br>
+
+        <ion-button expand="full" color="primary" class="bottom-button"
+          (click)="guardarInicioTurno()">Enviar</ion-button>
+
+        <!-- <ion-item> -->
+        <!-- <ion-label position="stacked">Id:</ion-label> -->
+        <ion-input type="hidden" formControlName="id"></ion-input>
+        <!-- </ion-item> -->
+
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>
+
+
+<!-- <ion-footer>
+    <ion-toolbar>
+      <ion-title> Pelom Ingenieria </ion-title>
+    </ion-toolbar>
+  </ion-footer> -->

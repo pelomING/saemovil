@@ -14,8 +14,8 @@ export interface Ayudante {
 }
 
 export interface Evento {
-  codigo?: string;
-  descripcion?: string;
+  codigo: string;
+  descripcion: string;
 }
 
 export interface Oficina {

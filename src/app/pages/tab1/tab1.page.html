@@ -1,73 +1,64 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-title>
-      Inicio Turno SAE
+      Inicio de Turno
     </ion-title>
   </ion-toolbar>
 </ion-header>
 
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="miFormulario">
 
-  <ion-content [fullscreen]="true" class="ion-padding" >
-    <ion-card>
+        <ion-select formControlName="codigo_oficina" label="Oficina" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{ oficina.nombre
+            }}</ion-select-option>
+        </ion-select>
 
-      <ion-card-content>
-      
-        <!-- <ion-button expand="full" (click)="showSelectedItem()">Mostrar Seleccionado</ion-button> -->
-      
-        <form [formGroup]="miFormulario">
-          
-          <ion-item>
-            <ion-label position="stacked" >Oficina:</ion-label>
-            <ion-select formControlName="codigo_oficina" aria-label=">Oficina:" >
-              <ion-select-option *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{ oficina.nombre }}</ion-select-option>
-            </ion-select>
-          </ion-item>
+        <br>
 
-          <ion-item>
-            <ion-label position="stacked" >Turno:</ion-label>
-            <ion-select formControlName="codigo_turno" aria-label="Turno:" >
-              <ion-select-option *ngFor="let turno of listaTurnos" [value]="turno.codigo">{{ turno.horario }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-          
-          <ion-item>
-            <ion-label position="stacked" >Vehiculo:</ion-label>
-            <ion-select formControlName="patente_vehiculo" aria-label="Vehiculo:" >
-              <ion-select-option *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.marca">{{ vehiculo.patente }}</ion-select-option>
-            </ion-select>
-          </ion-item>
-          
-          <ion-item>
-            <ion-label position="stacked" >Ayudante:</ion-label>
-            <ion-select formControlName="rut_ayudante" aria-label="Ayudante:" >
-              <ion-select-option *ngFor="let ayudante of listaAyudantes" [value]="ayudante.rut_ayudante">{{ ayudante.nombre }}</ion-select-option>
-            </ion-select>
-          </ion-item>
+        <ion-select formControlName="codigo_turno" label="Turno" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let turno of listaTurnos" [value]="turno.codigo">{{ turno.horario
+            }}</ion-select-option>
+        </ion-select>
 
-          <ion-item>
-            <ion-label position="stacked">KM Inicial:</ion-label>
-            <ion-input type="number" formControlName="km_inicia" aria-label="KM Inicial"></ion-input>
-          </ion-item>     
-          
-          <hr/>
-          <br>
-           
-          <ion-button expand="full" color="primary" class="bottom-button" (click)="guardarInicioTurno()">Guardar</ion-button>
+        <br>
 
-          <!-- <ion-item> -->
-            <!-- <ion-label position="stacked">Id:</ion-label> -->
-            <ion-input type="hidden" formControlName="id" ></ion-input>
-          <!-- </ion-item> -->
+        <ion-select formControlName="patente_vehiculo" label="Vehiculo" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.patente">{{ vehiculo.patente
+            }}</ion-select-option>
+        </ion-select>
 
-        </form>
+        <br>
 
-      </ion-card-content>
+        <ion-select formControlName="rut_ayudante" label="Ayudante" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let ayudante of listaAyudantes" [value]="ayudante.rut_ayudante">{{
+            ayudante.nombre
+            }}</ion-select-option>
+        </ion-select>
 
-    </ion-card>
-  </ion-content>
+        <br>
 
-  
-  <!-- <ion-footer>
+        <ion-input type="number" formControlName="km_inicia" label="KM Inicial" label-placement="floating" fill="outline" placeholder="Ingresar km inicial"></ion-input>
+
+        <br>
+
+        <ion-button expand="full" color="primary" class="bottom-button"
+          (click)="guardarInicioTurno()">Guardar</ion-button>
+
+        <!-- <ion-item> -->
+        <!-- <ion-label position="stacked">Id:</ion-label> -->
+        <ion-input type="hidden" formControlName="id"></ion-input>
+        <!-- </ion-item> -->
+
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+
+<!-- <ion-footer>
     <ion-toolbar>
       <ion-title> Pelom Ingenieria </ion-title>
     </ion-toolbar>

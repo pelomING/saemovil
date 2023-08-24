@@ -1,15 +1,14 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
 
+import { UsuarioService  } from '../../services/usuario.service';
 import { IndexdbService } from '../../services/indexdb.service';
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 
-import { Ayudante,Evento,Oficina,Vehiculo,Turno } from '../../interfaces/interfaces';
-
+import { Ayudante,Oficina,Vehiculo,Turno } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-tab1',
@@ -17,23 +16,12 @@ import { Ayudante,Evento,Oficina,Vehiculo,Turno } from '../../interfaces/interfa
   styleUrls: ['tab1.page.scss']
 })
 
-
-export class Tab1Page {
-
-
-  public listaEventos: Evento[] = [];
-
+export class Tab1Page implements OnInit {
 
   public listaAyudantes: Ayudante[] = [];
   public listaOficinas: Oficina[] = [];
   public listaVehiculos: Vehiculo[] = [];
   public listaTurnos: Turno[] = [];
- 
-  // public ItemSelectAyudante: Ayudante | undefined;
-  // public ItemSelectEvento: Evento | undefined;
-  // public ItemSelectOficina: Oficina | undefined;
-  // public ItemSelectVehiculo: Vehiculo | undefined;
-  // public ItemSelectTurno: Turno | undefined;
   
   public turnosae: TurnoSaeModel = new TurnoSaeModel();
   public miFormulario: FormGroup;
@@ -41,6 +29,7 @@ export class Tab1Page {
 
   constructor(
     private indexdbService: IndexdbService,
+    private usuarioService: UsuarioService,
     private turnosaeIndexdbService: TurnoSaeIndexdbService,
     private formBuilder: FormBuilder,
     private toastController: ToastController
@@ -122,11 +111,8 @@ async loadItemsFromIndexDB() {
 
 async loadItems(tableName: string) {
   try {
-    
     const items = await this.indexdbService.getAllFromIndex(tableName);
-
     console.log("Items",items);
-
     this.assignItemsToList(tableName, items);
     console.log(`${tableName} obtenidos:`, items);
   } catch (error) {
@@ -140,10 +126,8 @@ assignItemsToList(tableName: string, items: any[]) {
       this.listaAyudantes = items;
       break;
     case 'oficinas':
-      
       this.listaOficinas = items;
       console.log("cargar datos en oficina",this.listaOficinas);
-
       break;
     case 'vehiculos':
       this.listaVehiculos = items;
@@ -172,16 +156,20 @@ assignItemsToList(tableName: string, items: any[]) {
     if (this.miFormulario?.valid) {
 
       const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia } = this.miFormulario.value;
+      
       console.log("Id del registro creado : ", id);
 
+      await this.usuarioService.cargarRut_User();
+      let RUT_USER = this.usuarioService.rut_user;
+ 
       const turno_sae: TurnoSaeModel = new TurnoSaeModel({
-        rut_maestro:'1',
+        rut_maestro:RUT_USER,
         rut_ayudante,
         codigo_turno,
         patente_vehiculo,
         codigo_oficina,
         km_inicia,
-        km_final:'1',
+        km_final:'',
         fecha_hora_inicio: new Date(),
         fecha_hora_final: new Date(),
         fechaSistema: new Date(),

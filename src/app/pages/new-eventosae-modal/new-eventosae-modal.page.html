@@ -11,35 +11,39 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" >
 
-  <ion-list>
-    
-    <ion-item>
-      <ion-label position="floating">Nombre del Evento</ion-label>
-      <ion-input [(ngModel)]="eventName" aria-label="Nombre del Evento" name="eventName" required></ion-input>
-    </ion-item>
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="formularioEventoSae">
 
-    <ion-item>
-      <ion-label position="floating">Numero OT</ion-label>
-      <ion-input [(ngModel)]="eventOT" aria-label="Numero OT" name="eventOT" required></ion-input>
-    </ion-item>
+        <ion-input type="number" formControlName="numero_ot" label="N° OT" label-placement="floating" fill="outline"
+          placeholder=""></ion-input>
 
-    <ion-item>
-      <ion-label position="floating">Dirección</ion-label>
-      <ion-input [(ngModel)]="eventDireccion" aria-label="Direccion" name="eventDireccion" required></ion-input>
-    </ion-item>
+        <br>
 
-    <ion-item>
-      <ion-label position="floating">Motivo Evento</ion-label>
-      <ion-input [(ngModel)]="eventMotivo" aria-label="Motivo Evento" name="eventMotivo" required></ion-input>
-    </ion-item>
+        <ion-input type="text" formControlName="direccion" label="Dirección" label-placement="floating" fill="outline"
+          placeholder=""></ion-input>
 
-    <!-- <ion-item>
-      <ion-input [(ngModel)]="eventDate" aria-label="Fecha del Evento" name="eventDate" type="date" required></ion-input>
-    </ion-item> -->
+        <br>
 
-    <ion-button expand="full" (click)="saveEvent()">Guardar Evento</ion-button>
-  </ion-list>
-  
+        <ion-textarea label="Requerimiento:" formControlName="requerimiento" labelPlacement="floating" fill="outline"
+          placeholder="Enter text"></ion-textarea>
+
+        <br>
+
+        <ion-select formControlName="tipo_evento" label="Tipo Evento" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let tipo_evento of listaTipoEventos" [value]="tipo_evento.codigo">{{
+            tipo_evento.descripcion
+            }}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <ion-button expand="full" color="primary" class="bottom-button"
+          (click)="guardarEventoSae()">Guardar</ion-button>
+
+      </form>
+    </ion-card-content>
+  </ion-card>
 </ion-content>

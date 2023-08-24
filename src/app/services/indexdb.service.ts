@@ -6,6 +6,8 @@ import { EventoSaeModel } from '../interfaces/eventosae.model';
 import { Shift } from '../interfaces/shift.model';
 import { Base } from '../interfaces/base.model';
 
+import { Evento } from '../interfaces/interfaces';
+
 
 @Injectable({
   providedIn: 'root'
@@ -41,7 +43,8 @@ export class IndexdbService {
         }
 
         if (!db.objectStoreNames.contains('eventos')) {
-          db.createObjectStore('eventos', { keyPath: 'id', autoIncrement: true });
+          const store = db.createObjectStore('eventos', { keyPath: 'id', autoIncrement: true });
+          store.createIndex('indexCodigo', 'codigo');
         }
 
         if (!db.objectStoreNames.contains('ayudantes')) {
@@ -94,9 +97,32 @@ export class IndexdbService {
     return await this.db.getAll('eventos');
   }
 
-  async getAllOficinas(): Promise<any[]> {
-    return await this.db.getAll('oficinas');
+  async getTipoEvento(id: number): Promise<Evento> {
+    const db = await openDB('saemovil', 1);
+    return await db.get('eventos',id);
   }
+
+
+  async getTipoEventoByCodigo(codigo:string): Promise<any> {
+    const db = await openDB('saemovil', 1);
+    return db.getFromIndex('eventos', 'indexCodigo', codigo)
+  }
+
+
+  // async getTipoEventoByCampo(campoBusqueda: string, valorBusqueda: any): Promise<Evento | undefined> {
+  //   const db = await openDB('saemovil', 1);
+  
+  //   // Abre el índice en base al campo de búsqueda
+  //   const index = db.transaction('eventos').store.index(campoBusqueda);
+  
+  //   // Busca el registro usando el índice y el valor de búsqueda
+  //   return await index.get(valorBusqueda);
+  // }
+
+  // async getAllOficinas(): Promise<any[]> {
+  //   return await this.db.getAll('oficinas');
+  // }
+
 
   async getAllTurnos(): Promise<any[]> {
     return await this.db.getAll('turnos');

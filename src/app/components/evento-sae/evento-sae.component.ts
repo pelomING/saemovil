@@ -1,6 +1,9 @@
 import { ChangeDetectionStrategy, inject, Input, Component, OnInit } from '@angular/core';
 import { Platform } from '@ionic/angular';
-import { EventoSaeModel } from '../../interfaces/eventosae.model'
+import { EventoSaeModel } from 'src/app/models/evento-sae.model';
+import { format } from 'date-fns';
+import { SharedService } from '../../services/SharedService';
+
 
 @Component({
   selector: 'app-evento-sae',
@@ -19,8 +22,16 @@ export class EventoSaeComponent  implements OnInit {
     return this.platform.is('ios')
   }
 
-  constructor() { }
+  constructor(private sharedService: SharedService) {}
 
   ngOnInit() {}
+
+  formatearFecha(fecha: Date): string {
+    return format(fecha, 'dd/MM/yyyy HH:mm'); // Puedes ajustar el formato según tus necesidades
+  }
+
+  goToEnviarParametro(id:number) {
+    this.sharedService.selectEventosae(id);
+  }
 
 }

@@ -237,7 +237,7 @@ export class UsuarioService {
               if (tablaApi === 'ayudantes') {
                 dataToAdd = {
                   nombre: objeto.nombre,
-                  rut_ayudante: objeto.rut
+                  rut_ayudante: objeto.rut_ayudante
                 };
               } else if (tablaApi === 'eventos') {
                 dataToAdd = {
@@ -246,7 +246,7 @@ export class UsuarioService {
                 };
               } else if (tablaApi === 'oficinas') {
                 dataToAdd = {
-                  codigo: objeto.id.toString(),
+                  codigo: objeto.codigo,
                   nombre: objeto.nombre
                 };
               } else if (tablaApi === 'turnos') {

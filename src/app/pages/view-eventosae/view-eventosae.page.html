@@ -1,42 +1,56 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button
-        [text]="getBackButtonText()"
-        defaultHref="/"
-      ></ion-back-button>
+      <ion-back-button [text]="getBackButtonText()" (click)="goToPaginaPrincipal()" ></ion-back-button>
     </ion-buttons>
+    Envio de Evento
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true" *ngIf="eventosae">
-  <ion-item>
-    <ion-icon
-      aria-hidden="true"
-      name="person-circle"
-      color="primary"
-    ></ion-icon>
-    <ion-label class="ion-text-wrap">
-      <h2>
-        {{ eventosae.name }}
-        <span class="date">
-          <ion-note>{{ eventosae.date }}</ion-note>
-        </span>
-      </h2>
-      <h3>To: <ion-note>Me</ion-note></h3>
-    </ion-label>
-  </ion-item>
+  <ion-card>
+    <ion-card-content>
+      <ion-item>
 
-  <div class="ion-padding">
-    <h1>{{ eventosae.id }}</h1>
-    <p>
-      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-      tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-      veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-      commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-      velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-      cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-      est laborum.
-    </p>
-  </div>
+        <div slot="start" [class]="eventosae.estadoEnvio === 0 ? 'dot dot-active' : 'dot dot-unread'"></div>
+
+        <ion-label class="ion-text-wrap">
+          <h2>
+
+            {{ eventosae.numero_ot }}
+
+            <span class="date">
+              <ion-note class="small-font">{{ formatearFecha(eventosae.fecha_hora_ejecucion) }}</ion-note>
+              <ion-icon aria-hidden="true" name="chevron-forward" size="small" *ngIf="isIos()">
+              </ion-icon>
+            </span>
+
+          </h2>
+        </ion-label>
+      </ion-item>
+
+      <div class="ion-padding">
+
+        <ion-input type="text" label="Tipo Evento" readonly="true" label-placement="floating" fill="solid"
+          placeholder="" value="{{ tipo_evento }}"></ion-input>
+
+        <br>
+
+        <ion-input type="text" label="Dirección" readonly="true" label-placement="floating" fill="solid" placeholder=""
+          value="{{ eventosae.direccion }}"></ion-input>
+
+        <br>
+
+        <ion-input type="text" label="Requerimiento" readonly="true" label-placement="floating" fill="solid"
+          placeholder="" value="{{ eventosae.requerimiento }}"></ion-input>
+
+      </div>
+
+      <br>
+
+      <ion-button expand="full" color="primary" class="bottom-button" [disabled]="eventosae.estadoEnvio !== 0"
+        (click)="enviarEventoaMongoDb()">Enviar</ion-button>
+
+    </ion-card-content>
+  </ion-card>
 </ion-content>

@@ -1,9 +1,7 @@
 import { Injectable } from '@angular/core';
 import { IDBPDatabase } from 'idb';
 
-//import { EventoSaeModel } from '../models/evento-sae.model';
-import { EventoSaeModel } from '../interfaces/eventosae.model'
-
+import { EventoSaeModel } from '../models/evento-sae.model';
 import { IndexdbService } from './indexdb.service'
 
 @Injectable({
@@ -29,12 +27,12 @@ export class EventoSaeIndexdbService {
 
   }
 
-  async guardarEventoSae(turnosae: EventoSaeModel): Promise<void> {
-    await this.db.add('eventos-sae', turnosae);
+  async guardarEventoSae(evento: EventoSaeModel): Promise<void> {
+    await this.db.add('eventos-sae', evento);
   }
 
-  async actualizarEventoSae(turno: EventoSaeModel): Promise<void> {
-    await this.db.put('eventos-sae', turno);
+  async actualizarEventoSae(evento: EventoSaeModel): Promise<void> {
+    await this.db.put('eventos-sae', evento);
   }
 
   async deleteEventoSae(id: number): Promise<void> {
