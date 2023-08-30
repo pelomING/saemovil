@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
   providedIn: 'root',
 })
 export class SharedService {
+
   private eventosaeSelectedSource = new Subject<number>();
 
   eventosaeSelected$ = this.eventosaeSelectedSource.asObservable();
@@ -12,4 +13,23 @@ export class SharedService {
   selectEventosae(eventosaeId: number) {
     this.eventosaeSelectedSource.next(eventosaeId);
   }
+
+  private updateListSource = new Subject<void>();
+
+  updateList$ = this.updateListSource.asObservable();
+
+  triggerUpdateList() {
+    this.updateListSource.next();
+  }
+
+
+  private updatecargarEventos = new Subject<void>();
+
+  updateCargarEventos$ = this.updatecargarEventos.asObservable();
+
+  triggerUpdateCargarEventos() {
+    this.updatecargarEventos.next();
+  }
+
+  
 }

@@ -10,6 +10,9 @@ export class TurnoSaeModel {
   km_final?: string;
   fecha_hora_inicio?: Date;
   fecha_hora_final?: Date;
+  latitude?: string;
+  longitude?: string;
+
   fechaSistema?: Date;
   estadoEnvio?: number;
 

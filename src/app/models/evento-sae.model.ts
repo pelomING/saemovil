@@ -9,7 +9,10 @@ export class EventoSaeModel {
   rut_ayudante?: string;
   codigo_turno?: string;
   codigo_oficina?: string;
+  codigo_comuna!: string;
   fecha_hora_ejecucion!: Date;
+  latitude?: string;
+  longitude?: string;
   estadoEnvio?: number;
 
   constructor(data?: Partial<EventoSaeModel>) {

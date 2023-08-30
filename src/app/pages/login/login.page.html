@@ -43,9 +43,13 @@
 
         <ion-row>
           <ion-col>
-            <ion-button type="submit" color="secondary" expand="full" shape="round">
+
+            <ion-button id="open-loading" type="submit" color="secondary" expand="full" shape="round">
               Ingresar
             </ion-button>
+
+            <ion-loading trigger="open-loading" message="Ingresando..." duration="4000"></ion-loading>
+ 
           </ion-col>
         </ion-row>
 

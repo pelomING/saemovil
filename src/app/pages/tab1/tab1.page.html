@@ -44,8 +44,10 @@
 
         <br>
 
-        <ion-button expand="full" color="primary" class="bottom-button"
+        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button"
           (click)="guardarInicioTurno()">Guardar</ion-button>
+
+        <ion-loading trigger="open-loading" message="Guardando..." duration="1000"></ion-loading>
 
         <!-- <ion-item> -->
         <!-- <ion-label position="stacked">Id:</ion-label> -->

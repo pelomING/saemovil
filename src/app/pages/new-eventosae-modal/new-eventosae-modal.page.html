@@ -33,15 +33,22 @@
         <br>
 
         <ion-select formControlName="tipo_evento" label="Tipo Evento" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let tipo_evento of listaTipoEventos" [value]="tipo_evento.codigo">{{
-            tipo_evento.descripcion
-            }}</ion-select-option>
+          <ion-select-option *ngFor="let tipo_evento of listaTipoEventos" [value]="tipo_evento.codigo">{{tipo_evento.descripcion}}
+          </ion-select-option>
         </ion-select>
 
         <br>
 
-        <ion-button expand="full" color="primary" class="bottom-button"
+        <ion-select formControlName="codigo_comuna" label="Camuna" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let comuna of listaComunas" [value]="comuna.codigo">{{comuna.nombre}}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button"
           (click)="guardarEventoSae()">Guardar</ion-button>
+ 
+        <ion-loading trigger="open-loading" message="Guardando..." duration="1000"></ion-loading>
 
       </form>
     </ion-card-content>

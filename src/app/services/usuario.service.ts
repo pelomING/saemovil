@@ -13,6 +13,7 @@ const URL = environment.url;
 @Injectable({
   providedIn: 'root'
 })
+
 export class UsuarioService {
 
  token: string = '';
@@ -88,8 +89,10 @@ export class UsuarioService {
             await this.getObjetoParaSelects('oficinas');
             await this.getObjetoParaSelects('turnos');
             await this.getObjetoParaSelects('vehiculos');
-             
+            await this.getObjetoParaSelects('comunas');
+
             resolve(true);
+
           } else {
             this.token = '';
             this.storage.clear();
@@ -250,7 +253,8 @@ export class UsuarioService {
               } else if (tablaApi === 'oficinas') {
                 dataToAdd = {
                   codigo: objeto.id.toString(),
-                  nombre: objeto.nombre
+                  nombre: objeto.nombre,
+                  id_zonal: objeto.id,
                 };
               } else if (tablaApi === 'turnos') {
                 dataToAdd = {
@@ -261,6 +265,12 @@ export class UsuarioService {
                 dataToAdd = {
                   marca: objeto.marca,
                   patente: objeto.patente
+                };
+              }else if (tablaApi === 'comunas') {
+                dataToAdd = {
+                  codigo: objeto.codigo,
+                  nombre: objeto.nombre,
+                  oficina: objeto.oficina
                 };
               }
 
@@ -285,7 +295,7 @@ export class UsuarioService {
 
     });
 
-  }
+  } 
 
 
 

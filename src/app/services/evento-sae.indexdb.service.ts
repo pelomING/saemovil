@@ -43,6 +43,11 @@ export class EventoSaeIndexdbService {
     return await this.db.getAll('eventos-sae');
   }
 
+  async getEventosByEstadoEnvio(estado:number): Promise<EventoSaeModel[]> {
+    return await this.db.getAllFromIndex('eventos-sae', 'indexEstadoEnvio', estado)
+  }
+
+
   async getEventoSae(id: number): Promise<EventoSaeModel> {
     return await this.db.get('eventos-sae', id);
   }

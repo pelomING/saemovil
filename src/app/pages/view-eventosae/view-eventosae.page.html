@@ -1,7 +1,7 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-back-button [text]="getBackButtonText()" (click)="goToPaginaPrincipal()" ></ion-back-button>
+      <ion-back-button [text]="getBackButtonText()" (click)="goToPaginaPrincipal()"></ion-back-button>
     </ion-buttons>
     Envio de Evento
   </ion-toolbar>
@@ -30,12 +30,17 @@
       </ion-item>
 
       <div class="ion-padding">
-
+          
         <ion-input type="text" label="Tipo Evento" readonly="true" label-placement="floating" fill="solid"
           placeholder="" value="{{ tipo_evento }}"></ion-input>
 
         <br>
 
+        <ion-input type="text" label="Comuna" readonly="true" label-placement="floating" fill="solid"
+          placeholder="" value="{{ comuna }}"></ion-input>
+
+        <br>
+         
         <ion-input type="text" label="Dirección" readonly="true" label-placement="floating" fill="solid" placeholder=""
           value="{{ eventosae.direccion }}"></ion-input>
 
@@ -48,8 +53,10 @@
 
       <br>
 
-      <ion-button expand="full" color="primary" class="bottom-button" [disabled]="eventosae.estadoEnvio !== 0"
+      <ion-button id="open-loading" expand="full" color="primary" class="bottom-button" [disabled]="eventosae.estadoEnvio !== 0"
         (click)="enviarEventoaMongoDb()">Enviar</ion-button>
+
+      <ion-loading trigger="open-loading" message="Enviando..." duration="1000"></ion-loading>
 
     </ion-card-content>
   </ion-card>

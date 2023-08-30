@@ -64,7 +64,9 @@ export class EventoSaeService {
       codigo_oficina: ev.codigo_oficina,
       requerimiento: ev.requerimiento,
       direccion: ev.direccion,
-      fecha_hora_ejecucion: this.formatearFecha(ev.fecha_hora_ejecucion)
+      fecha_hora_ejecucion: this.formatearFecha(ev.fecha_hora_ejecucion),
+      latitude:ev.latitude,
+      longitude:ev.longitude
     };
 
     await this.usuarioService.cargarToken();

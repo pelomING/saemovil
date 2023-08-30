@@ -2,8 +2,7 @@ import { ChangeDetectorRef, Component, ViewChild, inject } from '@angular/core';
 import { ModalController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
-import { ActivatedRoute } from '@angular/router';
-
+import { Geolocation } from '@capacitor/geolocation';
 
 import { IndexdbService } from '../../services/indexdb.service';
 import { EventoSaeIndexdbService } from '../../services/evento-sae.indexdb.service';
@@ -25,7 +24,6 @@ import { SharedService } from '../../services/SharedService';
 
 export class Tab2Page {
 
-
   eventos_sae: EventoSaeModel[] = [];
   turnoSaeModel: TurnoSaeModel = {};
 
@@ -36,52 +34,43 @@ export class Tab2Page {
     private eventoSaeIndexdb: EventoSaeIndexdbService,
     private turnoSaeIndexdbService: TurnoSaeIndexdbService,
     private navCtrl: NavController,
-    private sharedService: SharedService,
-    private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private sharedService: SharedService
   ) {
 
     this.sharedService.eventosaeSelected$.subscribe(eventosaeId => {
       // Aquí decides qué hacer con la información, por ejemplo, recargar la lista
-
-      console.log("AQUI 23443334");
-
+      console.log("sharedService envio id : ", eventosaeId);
       this.goToEventosaeDetail(eventosaeId);
+    });
 
-
+    this.sharedService.updateCargarEventos$.subscribe(() => {
+      // Actualizar la lista aquí
+      console.log("sharedService.updateCargarEventos");
+      this.cargarEventos();
     });
 
   }
 
 
-
-  
-    
-  ionViewWillLeave(){
-
+  ionViewWillLeave() {
     console.log("ionViewWillLeave");
-
   }
 
-  
-  ionViewDidLeave(){
-
+  ionViewDidLeave() {
     console.log("ionViewDidLeave");
-
   }
-
 
   ionViewDidEnter() {
-
     console.log("ionViewDidEnter");
-    setInterval(() => {
-      this.cargarEventos();
-    }, 5000);
   }
 
+  ionViewWillEnter() {
+    console.log("ionViewWillEnter");
+  }
 
 
   ngOnInit(): void {
+    console.log("ngOnInit tab2");
     this.indexDBService.openDatabase()
       .then(() => this.cargarEventos())
       .catch((error: any) => {
@@ -102,28 +91,11 @@ export class Tab2Page {
   }
 
 
- async refresh(ev:any) {
+  async refresh(ev: any) {
     setTimeout(() => {
       ev.detail.complete();
       this.cargarEventos();
     }, 3000);
-  }
-
-
-
-  ionViewWillEnter() {
-
-    console.log("INICIO ionViewWillEnter");
-
-    this.route.queryParams.subscribe(params => {
-      if (params) {
-        // Forzar la detección de cambios manualmente
-        this.cdr.detectChanges();
-      }
-    });
-
-    console.log("$$$$$$$$$$$$$$$$$$$$$$$");
-
   }
 
 
@@ -164,7 +136,13 @@ export class Tab2Page {
 
         await this.ObtenerRegistrodeTurno();
 
-        const { numero_ot, direccion, requerimiento, tipo_evento } = result.data;
+        const { numero_ot, direccion, requerimiento, tipo_evento, codigo_comuna } = result.data;
+
+
+        const coordinates = await Geolocation.getCurrentPosition();
+        console.log('Current position latitude : ', coordinates.coords.latitude);
+        console.log('Current position longitude : ', coordinates.coords.longitude);
+
 
         const evento_sae: EventoSaeModel = new EventoSaeModel({
           numero_ot,
@@ -175,6 +153,9 @@ export class Tab2Page {
           rut_ayudante: this.turnoSaeModel.rut_ayudante,
           codigo_turno: this.turnoSaeModel.codigo_turno,
           codigo_oficina: this.turnoSaeModel.codigo_oficina,
+          codigo_comuna,
+          latitude:coordinates.coords.latitude.toString(),
+          longitude:coordinates.coords.longitude.toString(),
           fecha_hora_ejecucion: new Date(),
           estadoEnvio: 0
         });

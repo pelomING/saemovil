@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
+import { Geolocation } from '@capacitor/geolocation';
 
 import { UsuarioService  } from '../../services/usuario.service';
 import { IndexdbService } from '../../services/indexdb.service';
@@ -155,6 +156,13 @@ assignItemsToList(tableName: string, items: any[]) {
 
     if (this.miFormulario?.valid) {
 
+      const coordinates = await Geolocation.getCurrentPosition();
+
+      console.log('Current position latitude : ', coordinates.coords.latitude);
+
+      console.log('Current position longitude : ', coordinates.coords.longitude);
+
+
       const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia } = this.miFormulario.value;
       
       console.log("Id del registro creado : ", id);
@@ -169,11 +177,12 @@ assignItemsToList(tableName: string, items: any[]) {
         patente_vehiculo,
         codigo_oficina,
         km_inicia,
-        km_final:'',
         fecha_hora_inicio: new Date(),
         fecha_hora_final: new Date(),
         fechaSistema: new Date(),
-        estadoEnvio: 0
+        estadoEnvio: 0,
+        latitude:coordinates.coords.latitude.toString(),
+        longitude:coordinates.coords.longitude.toString()
       });
 
       if (id > 0) {
@@ -181,6 +190,11 @@ assignItemsToList(tableName: string, items: any[]) {
         turno_sae.id = id;
         // this.db.put('jornada-sae', turno);
         // console.log('Datos Actualizados en IndexDB:', turno);
+        
+        let turno = this.turnosaeIndexdbService.getTurnosae(turno_sae.id);
+
+        turno_sae.km_final = (await turno).km_final;
+
         this.turnosaeIndexdbService.actualizarTurnosae(turno_sae).then(() => {
           console.log('Datos Actualizados en IndexDB:', turno_sae);
         });

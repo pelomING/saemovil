@@ -1,5 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { SharedService } from '../../services/SharedService';
 
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
@@ -9,12 +10,18 @@ import { NavController } from '@ionic/angular';
 
 import { UsuarioService } from '../../services/usuario.service';
 import { IndexdbService } from '../../services/indexdb.service';
+
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
+
+import { EventoSaeIndexdbService } from '../../services/evento-sae.indexdb.service';
+
 
 import { TurnoSaeService } from '../../services/turnosae.service'
 import { TurnoSaeModel } from '../../models/turno-sae.model';
+import { EventoSaeModel } from '../../models/evento-sae.model';
 
 import { Ayudante, Oficina, Vehiculo, Turno } from '../../interfaces/interfaces';
+import { empty } from 'rxjs';
 
 @Component({
   selector: 'app-tab3',
@@ -29,16 +36,23 @@ export class Tab3Page {
   public listaVehiculos: Vehiculo[] = [];
   public listaTurnos: Turno[] = [];
 
+  public eventosEnviados: EventoSaeModel[] = [];
+
+  public kmfinal: string = '';
+
   public turnosae: TurnoSaeModel = new TurnoSaeModel();
   public miFormulario: FormGroup;
   public db!: IDBPDatabase;
 
   private turnoSaeService = inject(TurnoSaeService);
 
-  constructor(private indexdbService: IndexdbService,
+  constructor(
+    private sharedService: SharedService,
+    private indexdbService: IndexdbService,
     public navCtrl: NavController,
     private usuarioService: UsuarioService,
     private turnosaeIndexdbService: TurnoSaeIndexdbService,
+    private eventoSaeIndexdbService: EventoSaeIndexdbService,
     private uiService: UiServiceService,
     private formBuilder: FormBuilder,
     private toastController: ToastController) {
@@ -55,22 +69,60 @@ export class Tab3Page {
 
   }
 
+
   ngOnInit(): void {
 
     this.indexdbService.openDatabase()
       .then((dbIndex) => {
+
         this.db = dbIndex;
         console.log("Cargar turno sae");
-
         this.loadItemsFromIndexDB();
-
         this.ObtenerRegistrodeTurno();
+        this.ObtenerEstadoEnvioEventos();
 
       })
       .catch((error: any) => {
         console.error('Error al inicializar la base de datos:', error);
       });
 
+
+    this.sharedService.updateList$.subscribe(() => {
+      // Actualizar la lista aquí
+      console.log("sharedService.updateList");
+      this.ObtenerRegistrodeTurno();
+    });
+
+  }
+
+
+  ionViewWillLeave() {
+    console.log("ionViewWillLeave");
+  }
+
+  ionViewDidLeave() {
+    console.log("ionViewDidLeave");
+  }
+
+  ionViewDidEnter() {
+    console.log("ionViewDidEnter");
+  }
+
+  ionViewWillEnter() {
+    console.log("ionViewWillEnter");
+  }
+
+
+
+  async ObtenerEstadoEnvioEventos() {
+    await this.eventoSaeIndexdbService.getEventosByEstadoEnvio(0).then((eventos) => {
+      this.eventosEnviados = eventos;
+      const cantidadElementos = this.eventosEnviados.length;
+      console.log("Eventos No Enviados", cantidadElementos);
+    })
+      .catch((error) => {
+        console.error('Error al obtener el turno:', error);
+      });
   }
 
 
@@ -92,6 +144,9 @@ export class Tab3Page {
             km_inicia: turno_sae.km_inicia,
             km_final: turno_sae.km_final
           });
+
+          this.kmfinal = turno_sae.km_final!.toString();
+
         } else {
           console.log(`No se encontró el turno con ID ${turnoId}`);
         }
@@ -207,19 +262,22 @@ export class Tab3Page {
       await this.turnosaeIndexdbService.getTurnosae(id)
         .then((turno_sae) => {
 
-          if (turno_sae) {
+          if (turno_sae) 
+          {
 
-            data = {
-              rut_maestro: turno_sae.rut_maestro,
-              codigo_turno: turno_sae.codigo_turno,
-              rut_ayudante: turno_sae.rut_ayudante,
-              patente_vehiculo: turno_sae.patente_vehiculo,
-              km_inicia: turno_sae.km_inicia!.toString(),
-              km_final: turno_sae.km_final!.toString(),
-              codigo_oficina: turno_sae.codigo_oficina,
-              fecha_hora_inicio: turno_sae.fecha_hora_inicio,
-              fecha_hora_final: turno_sae.fecha_hora_final
-            };
+              data = {
+                rut_maestro: turno_sae.rut_maestro,
+                codigo_turno: turno_sae.codigo_turno,
+                rut_ayudante: turno_sae.rut_ayudante,
+                patente_vehiculo: turno_sae.patente_vehiculo,
+                km_inicia: turno_sae.km_inicia!.toString(),
+                km_final: turno_sae.km_final!.toString(),
+                codigo_oficina: turno_sae.codigo_oficina,
+                fecha_hora_inicio: turno_sae.fecha_hora_inicio,
+                fecha_hora_final: turno_sae.fecha_hora_final,
+                latitude: turno_sae.latitude,
+                longitude: turno_sae.longitude
+              };
 
           } else {
             console.log(`No se encontró el turno con ID ${id}`);
@@ -238,7 +296,7 @@ export class Tab3Page {
       console.log("VALIDO", valido);
 
       if (valido) {
-        
+
         this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
         this.usuarioService.logout();
 

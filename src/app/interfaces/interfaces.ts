@@ -18,9 +18,16 @@ export interface Evento {
   descripcion: string;
 }
 
+export interface Comuna {
+  codigo: string;
+  nombre: string;
+  oficina: string;
+}
+
 export interface Oficina {
   codigo?: string;
   nombre?: string;
+  id_zonal?:string;
 }
 
 export interface Turno {
