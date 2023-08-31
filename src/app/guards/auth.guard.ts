@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CanLoad, Route, UrlSegment } from '@angular/router';
+import { CanLoad, Route, Router, UrlSegment } from '@angular/router';
 import { NavController } from '@ionic/angular';
 import { Observable } from 'rxjs';
 import { UsuarioService } from '../services/usuario.service';
@@ -11,7 +11,8 @@ export class AuthGuard implements CanLoad {
 
   constructor(
     private usuarioService: UsuarioService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private router: Router
   ) {}
 
   async canLoad(route: Route, segments: UrlSegment[]): Promise<boolean> {
@@ -24,7 +25,9 @@ export class AuthGuard implements CanLoad {
       } else {
         console.log("No tenemos token en AuthGuard");
         // Redirigir al inicio de sesión si no hay token
-        this.navCtrl.navigateRoot('/login', { animated: true });
+        //this.navCtrl.navigateRoot('/login', { animated: true });
+        this.router.navigateByUrl('/login', { replaceUrl: true });
+
         return false;
       }
     } catch (error) {

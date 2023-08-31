@@ -4,12 +4,12 @@ import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
 import { Geolocation } from '@capacitor/geolocation';
 
-import { UsuarioService  } from '../../services/usuario.service';
+import { UsuarioService } from '../../services/usuario.service';
 import { IndexdbService } from '../../services/indexdb.service';
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 
-import { Ayudante,Oficina,Vehiculo,Turno } from '../../interfaces/interfaces';
+import { Ayudante, Oficina, Vehiculo, Turno } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-tab1',
@@ -23,7 +23,7 @@ export class Tab1Page implements OnInit {
   public listaOficinas: Oficina[] = [];
   public listaVehiculos: Vehiculo[] = [];
   public listaTurnos: Turno[] = [];
-  
+
   public turnosae: TurnoSaeModel = new TurnoSaeModel();
   public miFormulario: FormGroup;
   public db!: IDBPDatabase;
@@ -92,6 +92,7 @@ export class Tab1Page implements OnInit {
 
   }
 
+
   async presentToast(message: string) {
     const toast = await this.toastController.create({
       message: message,
@@ -102,43 +103,43 @@ export class Tab1Page implements OnInit {
   }
 
 
-async loadItemsFromIndexDB() {
-  const tableNames = ['ayudantes', 'oficinas', 'vehiculos', 'turnos'];
+  async loadItemsFromIndexDB() {
+    const tableNames = ['ayudantes', 'oficinas', 'vehiculos', 'turnos'];
 
-  for (const tableName of tableNames) {
-    await this.loadItems(tableName);
+    for (const tableName of tableNames) {
+      await this.loadItems(tableName);
+    }
   }
-}
 
-async loadItems(tableName: string) {
-  try {
-    const items = await this.indexdbService.getAllFromIndex(tableName);
-    console.log("Items",items);
-    this.assignItemsToList(tableName, items);
-    console.log(`${tableName} obtenidos:`, items);
-  } catch (error) {
-    console.error(`Error al obtener ${tableName}:`, error);
+  async loadItems(tableName: string) {
+    try {
+      const items = await this.indexdbService.getAllFromIndex(tableName);
+      console.log("Items", items);
+      this.assignItemsToList(tableName, items);
+      console.log(`${tableName} obtenidos:`, items);
+    } catch (error) {
+      console.error(`Error al obtener ${tableName}:`, error);
+    }
   }
-}
 
-assignItemsToList(tableName: string, items: any[]) {
-  switch (tableName) {
-    case 'ayudantes':
-      this.listaAyudantes = items;
-      break;
-    case 'oficinas':
-      this.listaOficinas = items;
-      console.log("cargar datos en oficina",this.listaOficinas);
-      break;
-    case 'vehiculos':
-      this.listaVehiculos = items;
-      break;
-    case 'turnos':
-      this.listaTurnos = items;
-      break;
-    // Agregar más casos según las tablas que necesites
+  assignItemsToList(tableName: string, items: any[]) {
+    switch (tableName) {
+      case 'ayudantes':
+        this.listaAyudantes = items;
+        break;
+      case 'oficinas':
+        this.listaOficinas = items;
+        console.log("cargar datos en oficina", this.listaOficinas);
+        break;
+      case 'vehiculos':
+        this.listaVehiculos = items;
+        break;
+      case 'turnos':
+        this.listaTurnos = items;
+        break;
+      // Agregar más casos según las tablas que necesites
+    }
   }
-}
 
 
 
@@ -164,14 +165,14 @@ assignItemsToList(tableName: string, items: any[]) {
 
 
       const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia } = this.miFormulario.value;
-      
+
       console.log("Id del registro creado : ", id);
 
       await this.usuarioService.cargarRut_User();
       let RUT_USER = this.usuarioService.rut_user;
- 
+
       const turno_sae: TurnoSaeModel = new TurnoSaeModel({
-        rut_maestro:RUT_USER,
+        rut_maestro: RUT_USER,
         rut_ayudante,
         codigo_turno,
         patente_vehiculo,
@@ -181,8 +182,8 @@ assignItemsToList(tableName: string, items: any[]) {
         fecha_hora_final: new Date(),
         fechaSistema: new Date(),
         estadoEnvio: 0,
-        latitude:coordinates.coords.latitude.toString(),
-        longitude:coordinates.coords.longitude.toString()
+        latitude: coordinates.coords.latitude.toString(),
+        longitude: coordinates.coords.longitude.toString()
       });
 
       if (id > 0) {
@@ -190,7 +191,7 @@ assignItemsToList(tableName: string, items: any[]) {
         turno_sae.id = id;
         // this.db.put('jornada-sae', turno);
         // console.log('Datos Actualizados en IndexDB:', turno);
-        
+
         let turno = this.turnosaeIndexdbService.getTurnosae(turno_sae.id);
 
         turno_sae.km_final = (await turno).km_final;
@@ -201,6 +202,7 @@ assignItemsToList(tableName: string, items: any[]) {
 
       } else {
 
+        turno_sae.id = 1;
         // this.db.add('jornada-sae', turno);
         // console.log('Datos guardados en IndexDB:', turno);
         this.turnosaeIndexdbService.guardarTurnosae(turno_sae).then(() => {

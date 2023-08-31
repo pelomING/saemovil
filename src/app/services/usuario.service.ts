@@ -115,7 +115,8 @@ export class UsuarioService {
     this.token   = '';
     this.rut_user = '';
     this.storage.clear();
-    this.navCtrl.navigateRoot('/login', { animated: true });
+    //this.navCtrl.navigateRoot('/login', { animated: true });
+    window.location.reload(); // Recarga
   }
 
 

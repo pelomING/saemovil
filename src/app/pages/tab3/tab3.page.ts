@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SharedService } from '../../services/SharedService';
+import { LoadingController } from '@ionic/angular';
 
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
@@ -55,6 +56,7 @@ export class Tab3Page {
     private eventoSaeIndexdbService: EventoSaeIndexdbService,
     private uiService: UiServiceService,
     private formBuilder: FormBuilder,
+    private loadingCtrl: LoadingController,
     private toastController: ToastController) {
 
     this.miFormulario = this.formBuilder.group({
@@ -218,26 +220,42 @@ export class Tab3Page {
 
       console.log("Id del registro creado : ", id);
 
-      let turnosae = await this.turnosaeIndexdbService.getTurnosae(id);
+      const loading = await this.loadingCtrl.create({
+        message: 'Guardando...',
+      });
 
-      console.log("Turno", turnosae);
+      loading.present();
 
-      turnosae!.km_final = km_final;
-      turnosae!.fecha_hora_final = new Date();
+      try {
 
-      if (turnosae) {
+        let turnosae = await this.turnosaeIndexdbService.getTurnosae(id);
 
-        console.log('Datos Actualizados en IndexDB:', turnosae);
+        console.log("Turno", turnosae);
 
-        this.turnosaeIndexdbService.actualizarTurnosae(turnosae).then(() => {
+        turnosae!.km_final = km_final;
+        turnosae!.fecha_hora_final = new Date();
+
+        if (turnosae) {
+
           console.log('Datos Actualizados en IndexDB:', turnosae);
-        });
 
+          this.turnosaeIndexdbService.actualizarTurnosae(turnosae).then(() => {
+            console.log('Datos Actualizados en IndexDB:', turnosae);
+          });
+
+        }
+
+        this.ObtenerRegistrodeTurno();
+        // Llamar a la función para mostrar el mensaje emergente
+        await this.presentToast('Los datos fueron actualizados');
+
+
+      } catch (error) {
+        // Manejar el error (puede mostrar un mensaje de error)
+      } finally {
+        // Cerrar el indicador de carga sin importar si se produjo un error o no
+        loading.dismiss();
       }
-
-      this.ObtenerRegistrodeTurno();
-      // Llamar a la función para mostrar el mensaje emergente
-      await this.presentToast('Los datos fueron actualizados');
 
     } else {
 
@@ -259,11 +277,18 @@ export class Tab3Page {
 
       console.log("Id del registro creado turno : ", id);
 
-      await this.turnosaeIndexdbService.getTurnosae(id)
-        .then((turno_sae) => {
+      const loading = await this.loadingCtrl.create({
+        message: 'Enviando...',
+      });
 
-          if (turno_sae) 
-          {
+      loading.present();
+
+      try {
+
+        await this.turnosaeIndexdbService.getTurnosae(id)
+          .then((turno_sae) => {
+
+            if (turno_sae) {
 
               data = {
                 rut_maestro: turno_sae.rut_maestro,
@@ -279,32 +304,40 @@ export class Tab3Page {
                 longitude: turno_sae.longitude
               };
 
-          } else {
-            console.log(`No se encontró el turno con ID ${id}`);
-          }
+            } else {
+              console.log(`No se encontró el turno con ID ${id}`);
+            }
 
-        })
-        .catch((error) => {
-          console.error('Error al obtener el turno:', error);
-        });
+          })
+          .catch((error) => {
+            console.error('Error al obtener el turno:', error);
+          });
 
-      console.log("DATA", data);
-      console.log("Enviando Datos desde Turno");
+        console.log("DATA", data);
+        console.log("Enviando Datos desde Turno");
 
-      const valido = await this.turnoSaeService.EnviarTurno(data);
+        const valido = await this.turnoSaeService.EnviarTurno(data);
 
-      console.log("VALIDO", valido);
+        console.log("VALIDO", valido);
 
-      if (valido) {
+        if (valido) {
 
-        this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
-        this.usuarioService.logout();
+          this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
+          this.usuarioService.logout();
 
-      }
+        }
 
-      if (valido == false) {
-        // mostrar alerta de usuario y contraseña no correctos
-        this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
+        if (valido == false) {
+          // mostrar alerta de usuario y contraseña no correctos
+          this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
+        }
+
+
+      } catch (error) {
+        // Manejar el error (puede mostrar un mensaje de error)
+      } finally {
+        // Cerrar el indicador de carga sin importar si se produjo un error o no
+        loading.dismiss();
       }
 
     } else {

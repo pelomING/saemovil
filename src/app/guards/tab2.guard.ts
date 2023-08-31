@@ -21,7 +21,10 @@ export class Tab2Guard implements CanLoad {
     async canLoad(route: Route, segments: UrlSegment[]): Promise<boolean> {
         try {
 
+            console.log("consulto desde guard Turno");
             let turno_sae = await this.turnosaeIndexdbService.getTurnosae(1)
+
+            
 
             if (turno_sae) {
                 console.log("enviar a tab desde guard");

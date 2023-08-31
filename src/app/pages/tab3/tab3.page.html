@@ -58,14 +58,10 @@
 
         <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button" (click)="guardarFinTurno()">Guardar</ion-button>
 
-        <ion-loading trigger="guardarFinTurno" message="Guardando..." duration="3000"></ion-loading>
-
         <br>
 
         <ion-button id="enviarTurnoaMongoDb" expand="full" color="primary" [disabled]="eventosEnviados.length !== 0 && kmfinal.length > 0" class="bottom-button"
           (click)="enviarTurnoaMongoDb()">Enviar</ion-button>
-
-        <ion-loading trigger="enviarTurnoaMongoDb" message="Enviando..." duration="4000"></ion-loading>
  
         <p>* Es necesario enviar todos los eventos y tener el km final</p>
 
