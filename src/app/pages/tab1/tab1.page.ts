@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
 import { Geolocation } from '@capacitor/geolocation';
+import { LoadingController } from '@ionic/angular';
 
 import { UsuarioService } from '../../services/usuario.service';
 import { IndexdbService } from '../../services/indexdb.service';
@@ -33,7 +34,8 @@ export class Tab1Page implements OnInit {
     private usuarioService: UsuarioService,
     private turnosaeIndexdbService: TurnoSaeIndexdbService,
     private formBuilder: FormBuilder,
-    private toastController: ToastController
+    private toastController: ToastController,
+    private loadingCtrl: LoadingController
   ) {
 
     this.miFormulario = this.formBuilder.group({
@@ -157,64 +159,77 @@ export class Tab1Page implements OnInit {
 
     if (this.miFormulario?.valid) {
 
-      const coordinates = await Geolocation.getCurrentPosition();
-
-      console.log('Current position latitude : ', coordinates.coords.latitude);
-
-      console.log('Current position longitude : ', coordinates.coords.longitude);
-
-
-      const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia } = this.miFormulario.value;
-
-      console.log("Id del registro creado : ", id);
-
-      await this.usuarioService.cargarRut_User();
-      let RUT_USER = this.usuarioService.rut_user;
-
-      const turno_sae: TurnoSaeModel = new TurnoSaeModel({
-        rut_maestro: RUT_USER,
-        rut_ayudante,
-        codigo_turno,
-        patente_vehiculo,
-        codigo_oficina,
-        km_inicia,
-        fecha_hora_inicio: new Date(),
-        fecha_hora_final: new Date(),
-        fechaSistema: new Date(),
-        estadoEnvio: 0,
-        latitude: coordinates.coords.latitude.toString(),
-        longitude: coordinates.coords.longitude.toString()
+      const loading = await this.loadingCtrl.create({
+        message: 'Guardando...',
       });
 
-      if (id > 0) {
+      loading.present();
 
-        turno_sae.id = id;
-        // this.db.put('jornada-sae', turno);
-        // console.log('Datos Actualizados en IndexDB:', turno);
+      try {
 
-        let turno = this.turnosaeIndexdbService.getTurnosae(turno_sae.id);
+        const coordinates = await Geolocation.getCurrentPosition();
+        console.log('Current position latitude : ', coordinates.coords.latitude);
+        console.log('Current position longitude : ', coordinates.coords.longitude);
 
-        turno_sae.km_final = (await turno).km_final;
+        const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia } = this.miFormulario.value;
 
-        this.turnosaeIndexdbService.actualizarTurnosae(turno_sae).then(() => {
-          console.log('Datos Actualizados en IndexDB:', turno_sae);
+        console.log("Id del registro creado : ", id);
+
+        await this.usuarioService.cargarRut_User();
+        let RUT_USER = this.usuarioService.rut_user;
+
+        const turno_sae: TurnoSaeModel = new TurnoSaeModel({
+          rut_maestro: RUT_USER,
+          rut_ayudante,
+          codigo_turno,
+          patente_vehiculo,
+          codigo_oficina,
+          km_inicia,
+          fecha_hora_inicio: new Date(),
+          fecha_hora_final: new Date(),
+          fechaSistema: new Date(),
+          estadoEnvio: 0,
+          latitude: coordinates.coords.latitude.toString(),
+          longitude: coordinates.coords.longitude.toString()
         });
 
-      } else {
+        if (id > 0) {
 
-        turno_sae.id = 1;
-        // this.db.add('jornada-sae', turno);
-        // console.log('Datos guardados en IndexDB:', turno);
-        this.turnosaeIndexdbService.guardarTurnosae(turno_sae).then(() => {
-          console.log('Datos guardados en IndexDB:', turno_sae);
-        });
+          turno_sae.id = id;
+          // this.db.put('jornada-sae', turno);
+          // console.log('Datos Actualizados en IndexDB:', turno);
 
+          let turno = this.turnosaeIndexdbService.getTurnosae(turno_sae.id);
+
+          turno_sae.km_final = (await turno).km_final;
+
+          this.turnosaeIndexdbService.actualizarTurnosae(turno_sae).then(() => {
+            console.log('Datos Actualizados en IndexDB:', turno_sae);
+          });
+
+        } else {
+
+          turno_sae.id = 1;
+          // this.db.add('jornada-sae', turno);
+          // console.log('Datos guardados en IndexDB:', turno);
+          this.turnosaeIndexdbService.guardarTurnosae(turno_sae).then(() => {
+            console.log('Datos guardados en IndexDB:', turno_sae);
+          });
+
+        }
+
+        this.ObtenerRegistrodeTurno();
+
+        // Llamar a la función para mostrar el mensaje emergente
+        await this.presentToast('Los datos se guardaron con éxito');
+
+
+      } catch (error) {
+        // Manejar el error (puede mostrar un mensaje de error)
+      } finally {
+        // Cerrar el indicador de carga sin importar si se produjo un error o no
+        loading.dismiss();
       }
-
-      this.ObtenerRegistrodeTurno();
-
-      // Llamar a la función para mostrar el mensaje emergente
-      await this.presentToast('Los datos se guardaron con éxito');
 
     } else {
 

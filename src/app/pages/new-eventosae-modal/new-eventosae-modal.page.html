@@ -46,10 +46,10 @@
         <br>
 
         <ion-button id="open-loading" expand="full" color="primary" class="bottom-button"
-          (click)="guardarEventoSae()">Guardar</ion-button>
- 
-        <ion-loading trigger="open-loading" message="Guardando..." duration="1000"></ion-loading>
-
+          (click)="guardarEventoSae()">
+          <ion-icon slot="start" name="save"></ion-icon>
+          Guardar</ion-button>
+           
       </form>
     </ion-card-content>
   </ion-card>

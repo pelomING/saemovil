@@ -3,6 +3,7 @@ import { ModalController } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
+import { LoadingController } from '@ionic/angular';
 
 import { IndexdbService } from '../../services/indexdb.service';
 import { EventoSaeIndexdbService } from '../../services/evento-sae.indexdb.service';
@@ -34,7 +35,8 @@ export class Tab2Page {
     private eventoSaeIndexdb: EventoSaeIndexdbService,
     private turnoSaeIndexdbService: TurnoSaeIndexdbService,
     private navCtrl: NavController,
-    private sharedService: SharedService
+    private sharedService: SharedService,
+    private loadingCtrl: LoadingController
   ) {
 
     this.sharedService.eventosaeSelected$.subscribe(eventosaeId => {
@@ -134,34 +136,51 @@ export class Tab2Page {
     modal.onDidDismiss().then(async (result) => {
       if (result.data) {
 
-        await this.ObtenerRegistrodeTurno();
 
-        const { numero_ot, direccion, requerimiento, tipo_evento, codigo_comuna } = result.data;
-
-
-        const coordinates = await Geolocation.getCurrentPosition();
-        console.log('Current position latitude : ', coordinates.coords.latitude);
-        console.log('Current position longitude : ', coordinates.coords.longitude);
-
-
-        const evento_sae: EventoSaeModel = new EventoSaeModel({
-          numero_ot,
-          tipo_evento,
-          direccion,
-          requerimiento,
-          rut_maestro: this.turnoSaeModel.rut_maestro,
-          rut_ayudante: this.turnoSaeModel.rut_ayudante,
-          codigo_turno: this.turnoSaeModel.codigo_turno,
-          codigo_oficina: this.turnoSaeModel.codigo_oficina,
-          codigo_comuna,
-          latitude:coordinates.coords.latitude.toString(),
-          longitude:coordinates.coords.longitude.toString(),
-          fecha_hora_ejecucion: new Date(),
-          estadoEnvio: 0
+        const loading = await this.loadingCtrl.create({
+          message: 'Guardando...',
         });
 
-        this.eventoSaeIndexdb.guardarEventoSae(evento_sae);
-        this.cargarEventos();
+        loading.present();
+
+        try {
+
+          await this.ObtenerRegistrodeTurno();
+
+          const { numero_ot, direccion, requerimiento, tipo_evento, codigo_comuna } = result.data;
+
+          const coordinates = await Geolocation.getCurrentPosition();
+          console.log('Current position latitude : ', coordinates.coords.latitude);
+          console.log('Current position longitude : ', coordinates.coords.longitude);
+
+
+          const evento_sae: EventoSaeModel = new EventoSaeModel({
+            numero_ot,
+            tipo_evento,
+            direccion,
+            requerimiento,
+            rut_maestro: this.turnoSaeModel.rut_maestro,
+            rut_ayudante: this.turnoSaeModel.rut_ayudante,
+            codigo_turno: this.turnoSaeModel.codigo_turno,
+            codigo_oficina: this.turnoSaeModel.codigo_oficina,
+            codigo_comuna,
+            latitude: coordinates.coords.latitude.toString(),
+            longitude: coordinates.coords.longitude.toString(),
+            fecha_hora_ejecucion: new Date(),
+            estadoEnvio: 0
+          });
+
+          this.eventoSaeIndexdb.guardarEventoSae(evento_sae);
+          this.cargarEventos();
+
+
+        } catch (error) {
+          // Manejar el error (puede mostrar un mensaje de error)
+        } finally {
+          // Cerrar el indicador de carga sin importar si se produjo un error o no
+          loading.dismiss();
+        }
+
 
       }
     });

@@ -107,11 +107,26 @@ export class Tab3Page {
   }
 
   ionViewDidEnter() {
-    console.log("ionViewDidEnter");
+    console.log("ionViewDidEnter 1");
   }
 
   ionViewWillEnter() {
     console.log("ionViewWillEnter");
+    
+    this.indexdbService.openDatabase()
+    .then((dbIndex) => {
+
+      this.db = dbIndex;
+      console.log("Cargar turno sae");
+      this.loadItemsFromIndexDB();
+      this.ObtenerRegistrodeTurno();
+      this.ObtenerEstadoEnvioEventos();
+
+    })
+    .catch((error: any) => {
+      console.error('Error al inicializar la base de datos:', error);
+    });
+
   }
 
 
@@ -147,7 +162,10 @@ export class Tab3Page {
             km_final: turno_sae.km_final
           });
 
-          this.kmfinal = turno_sae.km_final!.toString();
+          if(turno_sae.km_final)
+          {
+            this.kmfinal = turno_sae.km_final!.toString();
+          }
 
         } else {
           console.log(`No se encontró el turno con ID ${turnoId}`);

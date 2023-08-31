@@ -54,9 +54,9 @@
       <br>
 
       <ion-button id="open-loading" expand="full" color="primary" class="bottom-button" [disabled]="eventosae.estadoEnvio !== 0"
-        (click)="enviarEventoaMongoDb()">Enviar</ion-button>
-
-      <ion-loading trigger="open-loading" message="Enviando..." duration="1000"></ion-loading>
+        (click)="enviarEventoaMongoDb()">
+        <ion-icon slot="start" name="send"></ion-icon>
+        Enviar</ion-button>
 
     </ion-card-content>
   </ion-card>

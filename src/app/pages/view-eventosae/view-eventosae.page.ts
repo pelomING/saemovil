@@ -4,7 +4,7 @@ import { SharedService } from '../../services/SharedService';
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router';
-import { Platform } from '@ionic/angular';
+import { LoadingController, Platform } from '@ionic/angular';
 import { format } from 'date-fns';
 import { NavController } from '@ionic/angular';
 import { UiServiceService } from '../../services/ui-service.service';
@@ -42,6 +42,7 @@ export class ViewEventosaePage implements OnInit {
     public navCtrl: NavController,
     private uiService: UiServiceService,
     private sharedService: SharedService,
+    private loadingCtrl: LoadingController,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,) { }
 
@@ -82,12 +83,12 @@ export class ViewEventosaePage implements OnInit {
     console.log('buscarEventoforId : ', id);
     this.eventoSaeIndexdb.getEventoSae(parseInt(id, 10))
       .then(event => {
-        
+
         this.eventosae = event;
         this.buscarTipoEvento(this.eventosae.tipo_evento);
         this.buscarComuna(this.eventosae.codigo_comuna);
         console.log('Registro encontrado :', event);
-        
+
       })
       .catch(error => {
         console.error('Error al obtener los eventos:', error);
@@ -113,26 +114,42 @@ export class ViewEventosaePage implements OnInit {
 
   async enviarEventoaMongoDb() {
 
-    console.log("Enviando Datos desde Evento");
-    const valido = await this.eventoSaeService.EnviarEvento(this.eventosae);
-    console.log("VALIDO", valido);
 
-    if (valido) {
+    const loading = await this.loadingCtrl.create({
+      message: 'Enviando...',
+    });
 
-      this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
+    loading.present();
 
-      this.sharedService.triggerUpdateCargarEventos();
-      
-      // navegar al tabs
-      this.navCtrl.navigateBack('/main/tabs/tab2', { animated: true });
+    try {
 
-    }
+      console.log("Enviando Datos desde Evento");
+      const valido = await this.eventoSaeService.EnviarEvento(this.eventosae);
+      console.log("VALIDO", valido);
 
-    if (valido == false) {
+      if (valido) {
 
-      // mostrar alerta de usuario y contraseña no correctos
-      this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
+        this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
 
+        this.sharedService.triggerUpdateCargarEventos();
+
+        // navegar al tabs
+        this.navCtrl.navigateBack('/main/tabs/tab2', { animated: true });
+
+      }
+
+      if (valido == false) {
+
+        // mostrar alerta de usuario y contraseña no correctos
+        this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
+
+      }
+
+    } catch (error) {
+      // Manejar el error (puede mostrar un mensaje de error)
+    } finally {
+      // Cerrar el indicador de carga sin importar si se produjo un error o no
+      loading.dismiss();
     }
 
   }
