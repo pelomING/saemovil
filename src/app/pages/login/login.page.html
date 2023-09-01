@@ -5,11 +5,6 @@
 </ion-header>
 
 <ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">login</ion-title>
-    </ion-toolbar>
-  </ion-header>
 
   <div class="ion-text-center ion-padding">
     <form (ngSubmit)="login( fLogin )" #fLogin="ngForm">
@@ -17,7 +12,7 @@
 
         <ion-row>
           <ion-col>
-            <img src="/assets/avatars/PELOMG.jpg">
+            <img src="/assets/logo/logo_pelom.png">
           </ion-col>
         </ion-row>
         <br>
@@ -33,7 +28,7 @@
               type="{{ showPassword ? 'text' : 'password' }}" [(ngModel)]="loginUser.password" required label="Password"
               label-placement="floating" fill="outline" placeholder="Ingresar Password"></ion-input>
 
-              <ion-icon slot="end" name="{{ showPassword ? 'eye-off' : 'eye' }}"
+            <ion-icon slot="end" name="{{ showPassword ? 'eye-off' : 'eye' }}"
               (click)="toggleShowPassword()"></ion-icon>
 
             <br>
@@ -48,17 +43,15 @@
               Ingresar
             </ion-button>
 
-            <!-- <ion-loading trigger="open-loading" message="Ingresando..." duration="4000"></ion-loading> -->
- 
           </ion-col>
         </ion-row>
 
       </ion-grid>
     </form>
 
-    <div class="background-image"></div>
-
   </div>
+
+  <div class="background-image"></div>
 
   <div class="footer">
     <p>© 2023 Pelom</p>

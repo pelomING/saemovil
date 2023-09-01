@@ -4,6 +4,7 @@ import { AlertController } from '@ionic/angular';
 import { NavController } from '@ionic/angular';
 import { Geolocation } from '@capacitor/geolocation';
 import { LoadingController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 
 import { IndexdbService } from '../../services/indexdb.service';
 import { EventoSaeIndexdbService } from '../../services/evento-sae.indexdb.service';
@@ -28,6 +29,9 @@ export class Tab2Page {
   eventos_sae: EventoSaeModel[] = [];
   turnoSaeModel: TurnoSaeModel = {};
 
+  public latitude: string;
+  public longitude: string;
+
   constructor(
     private modalController: ModalController,
     private indexDBService: IndexdbService,
@@ -36,8 +40,9 @@ export class Tab2Page {
     private turnoSaeIndexdbService: TurnoSaeIndexdbService,
     private navCtrl: NavController,
     private sharedService: SharedService,
-    private loadingCtrl: LoadingController
-  ) {
+    private loadingCtrl: LoadingController,
+    private platform: Platform
+  ) { 
 
     this.sharedService.eventosaeSelected$.subscribe(eventosaeId => {
       // Aquí decides qué hacer con la información, por ejemplo, recargar la lista
@@ -149,10 +154,7 @@ export class Tab2Page {
 
           const { numero_ot, direccion, requerimiento, tipo_evento, codigo_comuna } = result.data;
 
-          const coordinates = await Geolocation.getCurrentPosition();
-          console.log('Current position latitude : ', coordinates.coords.latitude);
-          console.log('Current position longitude : ', coordinates.coords.longitude);
-
+          await this.obtenerUbicacion();
 
           const evento_sae: EventoSaeModel = new EventoSaeModel({
             numero_ot,
@@ -164,8 +166,8 @@ export class Tab2Page {
             codigo_turno: this.turnoSaeModel.codigo_turno,
             codigo_oficina: this.turnoSaeModel.codigo_oficina,
             codigo_comuna,
-            latitude: coordinates.coords.latitude.toString(),
-            longitude: coordinates.coords.longitude.toString(),
+            latitude:this.latitude,
+            longitude: this.longitude,
             fecha_hora_ejecucion: new Date(),
             estadoEnvio: 0
           });
@@ -219,6 +221,44 @@ export class Tab2Page {
 
     await alert.present();
   }
+
+
+
+  async solicitarPermisosDeGeolocalizacion() {
+    if (this.platform.is('hybrid')) {
+      try {
+        const status = await Geolocation.requestPermissions();
+        if (status.location === 'granted') {
+          // El usuario otorgó permisos, puedes usar Geolocation.getCurrentPosition aquí.
+        } else {
+          // El usuario no otorgó permisos, muestra un mensaje o realiza otras acciones.
+        }
+      } catch (error) {
+        // Maneja cualquier error que pueda ocurrir al solicitar los permisos.
+        console.error('Error al solicitar permisos de geolocalización:', error);
+      }
+    } else {
+      // Maneja el caso de que la aplicación se esté ejecutando en una plataforma web.
+      console.warn('La geolocalización no está disponible en la plataforma web.');
+    }
+  }
+
+
+ 
+  async obtenerUbicacion() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition();
+      this.latitude = coordinates.coords.latitude.toString();
+      this.longitude = coordinates.coords.longitude.toString();
+      console.log('Ubicación obtenida:', coordinates);
+      // Realiza las acciones necesarias con las coordenadas obtenidas aquí.
+    } catch (error) {
+      // Maneja la excepción generada cuando no se otorgan los permisos de geolocalización.
+      console.error('Error al obtener la ubicación:', error);
+      // Aquí puedes mostrar un mensaje al usuario o realizar otras acciones según tus necesidades.
+    }
+  }
+
 
 
 }

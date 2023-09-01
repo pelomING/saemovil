@@ -4,6 +4,7 @@ import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
 import { Geolocation } from '@capacitor/geolocation';
 import { LoadingController } from '@ionic/angular';
+import { Platform } from '@ionic/angular';
 
 import { UsuarioService } from '../../services/usuario.service';
 import { IndexdbService } from '../../services/indexdb.service';
@@ -29,13 +30,17 @@ export class Tab1Page implements OnInit {
   public miFormulario: FormGroup;
   public db!: IDBPDatabase;
 
+  public latitude: string;
+  public longitude: string;
+
   constructor(
     private indexdbService: IndexdbService,
     private usuarioService: UsuarioService,
     private turnosaeIndexdbService: TurnoSaeIndexdbService,
     private formBuilder: FormBuilder,
     private toastController: ToastController,
-    private loadingCtrl: LoadingController
+    private loadingCtrl: LoadingController,
+    private platform: Platform
   ) {
 
     this.miFormulario = this.formBuilder.group({
@@ -143,8 +148,6 @@ export class Tab1Page implements OnInit {
     }
   }
 
-
-
   // showSelectedItem() {
   //   if (this.ItemSelectAyudante !== null) {
   //     console.log('Selected Item:', this.ItemSelectAyudante);
@@ -153,8 +156,7 @@ export class Tab1Page implements OnInit {
   //   }
   // }
 
-
-
+  
   async guardarInicioTurno() {
 
     if (this.miFormulario?.valid) {
@@ -167,9 +169,7 @@ export class Tab1Page implements OnInit {
 
       try {
 
-        const coordinates = await Geolocation.getCurrentPosition();
-        console.log('Current position latitude : ', coordinates.coords.latitude);
-        console.log('Current position longitude : ', coordinates.coords.longitude);
+        await this.obtenerUbicacion();
 
         const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia } = this.miFormulario.value;
 
@@ -189,8 +189,8 @@ export class Tab1Page implements OnInit {
           fecha_hora_final: new Date(),
           fechaSistema: new Date(),
           estadoEnvio: 0,
-          latitude: coordinates.coords.latitude.toString(),
-          longitude: coordinates.coords.longitude.toString()
+          latitude: this.latitude,
+          longitude: this.longitude
         });
 
         if (id > 0) {
@@ -238,6 +238,45 @@ export class Tab1Page implements OnInit {
 
     }
   }
+
+
+
+  async solicitarPermisosDeGeolocalizacion() {
+    if (this.platform.is('hybrid')) {
+      try {
+        const status = await Geolocation.requestPermissions();
+        if (status.location === 'granted') {
+          // El usuario otorgó permisos, puedes usar Geolocation.getCurrentPosition aquí.
+        } else {
+          // El usuario no otorgó permisos, muestra un mensaje o realiza otras acciones.
+        }
+      } catch (error) {
+        // Maneja cualquier error que pueda ocurrir al solicitar los permisos.
+        console.error('Error al solicitar permisos de geolocalización:', error);
+      }
+    } else {
+      // Maneja el caso de que la aplicación se esté ejecutando en una plataforma web.
+      console.warn('La geolocalización no está disponible en la plataforma web.');
+    }
+  }
+
+
+ 
+  async obtenerUbicacion() {
+    try {
+      const coordinates = await Geolocation.getCurrentPosition();
+      this.latitude = coordinates.coords.latitude.toString();
+      this.longitude = coordinates.coords.longitude.toString();
+      console.log('Ubicación obtenida:', coordinates);
+      // Realiza las acciones necesarias con las coordenadas obtenidas aquí.
+    } catch (error) {
+      // Maneja la excepción generada cuando no se otorgan los permisos de geolocalización.
+      console.error('Error al obtener la ubicación:', error);
+      // Aquí puedes mostrar un mensaje al usuario o realizar otras acciones según tus necesidades.
+    }
+  }
+
+
 
 
 }

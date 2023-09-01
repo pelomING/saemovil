@@ -2,12 +2,12 @@
 /* styles.scss */
 .background-image {
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1)),
-    url('/assets/background-image-1.png');
+    url('/assets/background-image.png');
   /* Ruta de tu imagen de fondo */
   background-size: cover;
   background-position: bottom;
   width: 100%;
-  height: 300px;
+  height: 30%;
   /* Ajusta la altura según tus necesidades */
   position: absolute;
   bottom: 0;
@@ -21,12 +21,12 @@
   position: absolute;
   bottom: 0;
   width: 100%;
-  height: 50px;
+  height: 8%;
   text-align: center;
   background-color: rgba(0, 0, 0, 0.5);
   /* Fondo semitransparente */
   color: white;
-  padding: 2px;
+  padding: 1px;
   border-radius: 60% 100% 0 0;
 }
  
