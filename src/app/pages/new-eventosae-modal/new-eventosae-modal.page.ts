@@ -8,7 +8,7 @@ import { IndexdbService } from '../../services/indexdb.service';
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 
-import { Evento,Comuna } from '../../interfaces/interfaces';
+import { Evento, Comuna } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-new-eventosae-modal',
@@ -21,8 +21,8 @@ export class NewEventosaeModalPage implements OnInit {
 
   public listaTipoEventos: Evento[] = [];
   public listaComunas: Comuna[] = [];
-  public turnoSaeModel: TurnoSaeModel | undefined; 
- 
+  public turnoSaeModel: TurnoSaeModel | undefined;
+
   public formularioEventoSae: FormGroup;
   public db!: IDBPDatabase;
 
@@ -38,12 +38,27 @@ export class NewEventosaeModalPage implements OnInit {
     this.formularioEventoSae = this.formBuilder.group({
       id: [''],
       tipo_evento: ['', Validators.required],
-      codigo_comuna:['', Validators.required],
+      codigo_comuna: ['', Validators.required],
       numero_ot: ['', Validators.required],
       direccion: ['', Validators.required],
-      requerimiento: ['', Validators.required]
+      requerimiento: ['', Validators.required],
+      hora_inicio: [
+        '',
+        [Validators.required, Validators.pattern(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)],
+      ],
+      hora_termino: [
+        '',
+        [Validators.required, Validators.pattern(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)],
+      ],
     });
+    
 
+  }
+
+
+  // Getter para acceder al control del formulario
+  get f() {
+    return this.formularioEventoSae.controls;
   }
 
 
@@ -60,16 +75,16 @@ export class NewEventosaeModalPage implements OnInit {
   }
 
 
-  async loadItemsFromIndexDB() {  
-    
+  async loadItemsFromIndexDB() {
+
     const itemsEventos = await this.indexdbService.getAllFromIndex('eventos');
     this.listaTipoEventos = itemsEventos;
-    
-    if(this.turnoSaeModel){
+
+    if (this.turnoSaeModel) {
       const itemsComunas = await this.indexdbService.getComunaByOficina(this.turnoSaeModel.codigo_oficina);
-      this.listaComunas = itemsComunas;  
+      this.listaComunas = itemsComunas;
     }
-    
+
   }
 
 

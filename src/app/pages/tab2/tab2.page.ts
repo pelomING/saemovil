@@ -152,7 +152,7 @@ export class Tab2Page {
 
           await this.ObtenerRegistrodeTurno();
 
-          const { numero_ot, direccion, requerimiento, tipo_evento, codigo_comuna } = result.data;
+          const { numero_ot, direccion, requerimiento, tipo_evento, codigo_comuna, hora_inicio, hora_termino } = result.data;
 
           await this.obtenerUbicacion();
 
@@ -169,6 +169,8 @@ export class Tab2Page {
             latitude:this.latitude,
             longitude: this.longitude,
             fecha_hora_ejecucion: new Date(),
+            hora_inicio,
+            hora_termino,
             estadoEnvio: 0
           });
 

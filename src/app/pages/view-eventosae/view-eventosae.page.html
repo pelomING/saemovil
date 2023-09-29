@@ -30,31 +30,42 @@
       </ion-item>
 
       <div class="ion-padding">
-          
+
         <ion-input type="text" label="Tipo Evento" readonly="true" label-placement="floating" fill="solid"
           placeholder="" value="{{ tipo_evento }}"></ion-input>
 
         <br>
 
-        <ion-input type="text" label="Comuna" readonly="true" label-placement="floating" fill="solid"
-          placeholder="" value="{{ comuna }}"></ion-input>
+        <ion-input type="text" label="Comuna" readonly="true" label-placement="floating" fill="solid" placeholder=""
+          value="{{ comuna }}"></ion-input>
 
         <br>
-         
+
         <ion-input type="text" label="Dirección" readonly="true" label-placement="floating" fill="solid" placeholder=""
           value="{{ eventosae.direccion }}"></ion-input>
 
         <br>
 
-        <ion-input type="text" label="Requerimiento" readonly="true" label-placement="floating" fill="solid"
+        <ion-input type="text" label="Trabajo Solicitado" readonly="true" label-placement="floating" fill="solid"
           placeholder="" value="{{ eventosae.requerimiento }}"></ion-input>
+
+        <br>
+
+        <ion-input type="text" label="Hora Inicio" readonly="true" label-placement="floating" fill="solid"
+          placeholder="" value="{{ eventosae.hora_inicio }}"></ion-input>
+
+        <br>
+
+        <ion-input type="text" label="Hora Termino" readonly="true" label-placement="floating" fill="solid"
+          placeholder="" value="{{ eventosae.hora_termino }}"></ion-input>
+
 
       </div>
 
       <br>
 
-      <ion-button id="open-loading" expand="full" color="primary" class="bottom-button" [disabled]="eventosae.estadoEnvio !== 0"
-        (click)="enviarEventoaMongoDb()">
+      <ion-button id="open-loading" expand="full" color="primary" class="bottom-button"
+        [disabled]="eventosae.estadoEnvio !== 0" (click)="enviarEventoaMongoDb()">
         <ion-icon slot="start" name="send"></ion-icon>
         Enviar</ion-button>
 

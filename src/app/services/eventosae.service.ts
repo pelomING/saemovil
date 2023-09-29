@@ -63,6 +63,8 @@ export class EventoSaeService {
       codigo_turno: ev.codigo_turno,
       codigo_oficina: ev.codigo_oficina,
       requerimiento: ev.requerimiento,
+      hora_inicio:ev.hora_inicio,
+      hora_termino:ev.hora_termino,
       direccion: ev.direccion,
       fecha_hora_ejecucion: this.formatearFecha(ev.fecha_hora_ejecucion),
       latitude:ev.latitude,

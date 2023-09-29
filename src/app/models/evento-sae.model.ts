@@ -11,6 +11,8 @@ export class EventoSaeModel {
   codigo_oficina?: string;
   codigo_comuna!: string;
   fecha_hora_ejecucion!: Date;
+  hora_inicio!: string;
+  hora_termino!: string;
   latitude?: string;
   longitude?: string;
   estadoEnvio?: number;

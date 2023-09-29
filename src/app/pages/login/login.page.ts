@@ -16,8 +16,8 @@ import { Usuario } from '../../interfaces/interfaces';
 export class LoginPage {
 
   loginUser = {
-    rut: '12345234-7',
-    password: '12345234-7'
+    rut: '',
+    password: ''
   };
 
   constructor(

@@ -27,29 +27,40 @@
 
         <br>
 
-        <ion-textarea label="Trabajo solicitado:" formControlName="requerimiento" labelPlacement="floating" fill="outline"
-          placeholder="Enter text"></ion-textarea>
+        <ion-textarea label="Trabajo Solicitado:" formControlName="requerimiento" labelPlacement="floating"
+          fill="outline" placeholder="Enter text"></ion-textarea>
 
         <br>
 
         <ion-select formControlName="tipo_evento" label="Tipo Evento" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let tipo_evento of listaTipoEventos" [value]="tipo_evento.codigo">{{tipo_evento.descripcion}}
+          <ion-select-option *ngFor="let tipo_evento of listaTipoEventos"
+            [value]="tipo_evento.codigo">{{tipo_evento.descripcion}}
           </ion-select-option>
         </ion-select>
 
         <br>
 
         <ion-select formControlName="codigo_comuna" label="Camuna" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let comuna of listaComunas" [value]="comuna.codigo">{{comuna.nombre}}</ion-select-option>
+          <ion-select-option *ngFor="let comuna of listaComunas"
+            [value]="comuna.codigo">{{comuna.nombre}}</ion-select-option>
         </ion-select>
 
         <br>
 
-        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button"
-          (click)="guardarEventoSae()">
+        <ion-input type="text" formControlName="hora_inicio" label="Hora Inicio" label-placement="floating" fill="outline"
+          placeholder="HH:mm"></ion-input>
+
+        <br>
+
+        <ion-input type="text" formControlName="hora_termino" label="Hora Termino" label-placement="floating" fill="outline"
+        placeholder="HH:mm"></ion-input>
+
+        <br>
+
+        <ion-button id="open-loading" expand="full"  [disabled]="!formularioEventoSae.valid"  color="primary" class="bottom-button" (click)="guardarEventoSae()">
           <ion-icon slot="start" name="save"></ion-icon>
           Guardar</ion-button>
-           
+
       </form>
     </ion-card-content>
   </ion-card>
