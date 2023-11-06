@@ -51,7 +51,7 @@ ion-item {
   }
   
   .dot-unread {
-    background: var(--ion-color-primary);
+    background: var(--ion-color-success);
   }
   
   /* Estado leído */
@@ -61,7 +61,8 @@ ion-item {
   
   /* Estado activo */
   .dot-active {
-    background: var(--ion-color-success);
+    //background: var(--ion-color-success);
+    background: var(--ion-color-danger);
   }
   
   .small-font {
