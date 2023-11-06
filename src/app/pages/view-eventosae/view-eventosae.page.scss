@@ -92,12 +92,12 @@ ion-item {
   }
   
   .dot-unread {
-    background: var(--ion-color-success);
+    background: var(--ion-color-primary);
   }
   
   /* Estado leído */
   .dot-read {
-    background: var(--ion-color-secondary);
+    background: var(--ion-color-primary);
   }
   
   /* Estado activo */
