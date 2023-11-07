@@ -73,25 +73,95 @@ export class Tab4Page {
 
 
 
-  cerrarApp(): void {
-    
-    console.log("Cerrar APP");
-    this.usuarioService.logout();
+  async cerrarApp(): Promise<void> {
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Cerrando...',
+    });
+
+    loading.present();
+
+    try {
+
+      console.log("Cerrar APP");
+      this.usuarioService.logout();
+
+    } catch (error) {
+
+      this.uiService.alertaInformativa('Error en el servidor');
+
+    } finally {
+      // Cerrar el indicador de carga sin importar si se produjo un error o no
+      loading.dismiss();
+    }
+
 
   }
 
-  actualizarBasedeDatos(): void {
-    
-    console.log("ACTUALIZAR BASE DE DATOS");
-    this.usuarioService.getObjetoParaSelects('ayudantes');
-    this.usuarioService.getObjetoParaSelects('eventos');
-    this.usuarioService.getObjetoParaSelects('oficinas');
-    this.usuarioService.getObjetoParaSelects('turnos');
-    this.usuarioService.getObjetoParaSelects('vehiculos');
-    this.usuarioService.getObjetoParaSelects('comunas');
+  async actualizarBasedeDatos(): Promise<void> {
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Actualizando...',
+    });
+
+    loading.present();
+
+    try {
+
+      console.log("ACTUALIZAR BASE DE DATOS");
+
+      await this.usuarioService.getObjetoParaSelects('ayudantes');
+
+      await this.usuarioService.getObjetoParaSelects('eventos');
+
+      await this.usuarioService.getObjetoParaSelects('oficinas');
+
+      await this.usuarioService.getObjetoParaSelects('turnos');
+
+      await this.usuarioService.getObjetoParaSelects('vehiculos');
+
+      await this.usuarioService.getObjetoParaSelects('comunas');
+
+      await this.presentToast('Los datos se guardaron con éxito');
+
+      window.location.reload(); // Recarga
+
+    } catch (error) {
+
+      this.uiService.alertaInformativa('Error en el servidor');
+
+    } finally {
+      // Cerrar el indicador de carga sin importar si se produjo un error o no
+      loading.dismiss();
+    }
 
   }
 
+
+
+  async recargaApp() {
+
+    const loading = await this.loadingCtrl.create({
+      message: 'Recargando...',
+    });
+
+    loading.present();
+
+    try {
+
+      window.location.reload();
+
+    } catch (error) {
+
+      this.uiService.alertaInformativa('Error en el servidor');
+
+    } finally {
+      // Cerrar el indicador de carga sin importar si se produjo un error o no
+      loading.dismiss();
+    }
+
+
+  }
 
 
   ngOnInit(): void {
@@ -134,20 +204,20 @@ export class Tab4Page {
 
   ionViewWillEnter() {
     console.log("ionViewWillEnter");
-    
+
     this.indexdbService.openDatabase()
-    .then((dbIndex) => {
+      .then((dbIndex) => {
 
-      this.db = dbIndex;
-      console.log("Cargar turno sae");
-      this.loadItemsFromIndexDB();
-      this.ObtenerRegistrodeTurno();
-      this.ObtenerEstadoEnvioEventos();
+        this.db = dbIndex;
+        console.log("Cargar turno sae");
+        this.loadItemsFromIndexDB();
+        this.ObtenerRegistrodeTurno();
+        this.ObtenerEstadoEnvioEventos();
 
-    })
-    .catch((error: any) => {
-      console.error('Error al inicializar la base de datos:', error);
-    });
+      })
+      .catch((error: any) => {
+        console.error('Error al inicializar la base de datos:', error);
+      });
 
   }
 
@@ -184,8 +254,7 @@ export class Tab4Page {
             km_final: turno_sae.km_final
           });
 
-          if(turno_sae.km_final)
-          {
+          if (turno_sae.km_final) {
             this.kmfinal = turno_sae.km_final!.toString();
           }
 
