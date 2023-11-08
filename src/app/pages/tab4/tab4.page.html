@@ -1,0 +1,60 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>
+      {{version}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card>
+    <ion-card-content>
+      <form [formGroup]="miFormulario">
+
+        <br>
+ 
+        <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button" (click)="cerrarApp()">
+          <ion-icon name="log-in-outline"></ion-icon> &nbsp; Cerrar Aplicación 
+        </ion-button>
+        
+        <br>
+
+        <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button" (click)="actualizarBasedeDatos()">
+          <ion-icon name="cloud-download-outline"></ion-icon> &nbsp; Actualizar Base    
+        </ion-button>
+        
+        <br>
+
+        <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button" (click)="recargaApp()">
+          <ion-icon name="reload-outline"></ion-icon> &nbsp; Recarga App    
+        </ion-button>
+        
+        <!-- <br>
+
+        <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button" (click)="enviarTodo()">
+          <ion-icon name="airplane-outline"></ion-icon> &nbsp; Enviar Eventos
+        </ion-button> -->
+        
+        <br>
+
+        <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button" (click)="Reconectar()">
+          <ion-icon name="radio-outline"></ion-icon> &nbsp; Reconectar
+        </ion-button>
+        
+        <br>
+        
+      </form>
+    </ion-card-content>
+  </ion-card>
+</ion-content>
+
+
+
+
+
+<!-- <ion-footer>
+    <ion-toolbar>
+      <ion-title> Pelom Ingenieria </ion-title>
+    </ion-toolbar>
+  </ion-footer> -->

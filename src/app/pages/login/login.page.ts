@@ -7,6 +7,10 @@ import { UiServiceService } from '../../services/ui-service.service';
 import { UsuarioService } from '../../services/usuario.service';
 import { Usuario } from '../../interfaces/interfaces';
 
+import { environment } from '../../../environments/environment';
+
+const VERSION = environment.version;
+
 
 @Component({
   selector: 'app-login',
@@ -19,6 +23,10 @@ export class LoginPage {
     rut: '',
     password: ''
   };
+
+
+  version = VERSION;
+  
 
   constructor(
     private usuarioService: UsuarioService,

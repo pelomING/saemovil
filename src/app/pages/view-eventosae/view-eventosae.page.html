@@ -56,7 +56,7 @@
 
         <br>
 
-        <ion-input type="text" label="Hora Termino" readonly="true" label-placement="floating" fill="solid"
+        <ion-input type="text" label="Hora Término" readonly="true" label-placement="floating" fill="solid"
           placeholder="" value="{{ eventosae.hora_termino }}"></ion-input>
 
 
@@ -66,8 +66,8 @@
 
       <ion-button id="open-loading" expand="full" color="primary" class="bottom-button"
         [disabled]="eventosae.estadoEnvio !== 0" (click)="enviarEventoaMongoDb()">
-        <ion-icon slot="start" name="send"></ion-icon>
-        Enviar</ion-button>
+        
+        <ion-icon name="paper-plane-outline"></ion-icon> &nbsp; Enviar</ion-button>
 
     </ion-card-content>
   </ion-card>

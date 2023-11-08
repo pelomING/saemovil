@@ -40,7 +40,7 @@
 
         <br>
 
-        <ion-select formControlName="codigo_comuna" label="Camuna" label-placement="floating" fill="outline">
+        <ion-select formControlName="codigo_comuna" label="Comuna" label-placement="floating" fill="outline">
           <ion-select-option *ngFor="let comuna of listaComunas"
             [value]="comuna.codigo">{{comuna.nombre}}</ion-select-option>
         </ion-select>
@@ -52,7 +52,7 @@
 
         <br>
 
-        <ion-input type="text" formControlName="hora_termino" label="Hora Termino" label-placement="floating" fill="outline"
+        <ion-input type="text" formControlName="hora_termino" label="Hora Término" label-placement="floating" fill="outline"
         placeholder="HH:mm"></ion-input>
 
         <br>

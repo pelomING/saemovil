@@ -111,6 +111,49 @@ export class UsuarioService {
   }
 
 
+
+
+  reconectar( rut: string, password: string ) {
+
+    const data = { rut, password };
+
+    return new Promise( resolve => {
+
+      this.http.post(`${ URL }/auth/login`, data , { observe: 'response' }).subscribe( 
+        async (response: any) => {
+          
+          console.log('Tipo de respuesta:', typeof response.body);
+          console.log('Contenido de la respuesta:', response.body);
+          const resp = response.body;
+
+          if ( resp.token ) {
+            
+            this.initStorage();
+
+            await this.guardarToken( resp.token );
+
+            await this.guardarUser( resp.user.rut );
+
+            resolve(true);
+
+          } else {
+            this.token = '';
+            this.storage.clear();
+            resolve(false);
+          }
+
+        },
+        (error) => {
+          console.error('Error en la solicitud HTTP:', error);
+          resolve(false);
+        }
+      );
+
+    });
+
+  }
+
+
   logout() {
     this.token   = '';
     this.rut_user = '';
