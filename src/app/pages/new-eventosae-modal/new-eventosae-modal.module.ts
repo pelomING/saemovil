@@ -7,13 +7,18 @@ import { ReactiveFormsModule } from '@angular/forms'
 import { NewEventosaeModalPage } from './new-eventosae-modal.page';
 import { NewEventosaeModalPageRoutingModule } from './new-eventosae-modal-routing.module';
 
+
+import { TypeaheadModule } from '../../components/typeahead/typeahead.module';
+
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     IonicModule,
     NewEventosaeModalPageRoutingModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    TypeaheadModule
   ],
   declarations: [NewEventosaeModalPage]
 })

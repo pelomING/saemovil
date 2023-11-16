@@ -22,12 +22,17 @@
 
         <br>
 
+        <ion-input type="text" formControlName="despachador" label="Despachador" label-placement="floating" fill="outline"
+        placeholder=""></ion-input>
+
+        <br>
+
         <ion-input type="text" formControlName="direccion" label="Dirección" label-placement="floating" fill="outline"
           placeholder=""></ion-input>
 
         <br>
 
-        <ion-textarea label="Trabajo Solicitado:" formControlName="requerimiento" labelPlacement="floating"
+        <ion-textarea label="Trabajo Solicitado" formControlName="requerimiento" labelPlacement="floating"
           fill="outline" placeholder="Enter text"></ion-textarea>
 
         <br>
@@ -40,10 +45,17 @@
 
         <br>
 
-        <ion-select formControlName="codigo_comuna" label="Comuna" label-placement="floating" fill="outline">
+        <ion-input formControlName="nombre_comuna" id="select-comuna" type="text" label="Comuna" label-placement="floating" fill="outline"
+        placeholder="Selecionar"></ion-input>
+
+        <br>
+
+        <ion-input formControlName="codigo_comuna" readonly="true" type="text" label="Codigo Comuna" label-placement="floating" fill="outline" ></ion-input>
+       
+        <!-- <ion-select formControlName="codigo_comuna" label="Comuna" label-placement="floating" fill="outline">
           <ion-select-option *ngFor="let comuna of listaComunas"
             [value]="comuna.codigo">{{comuna.nombre}}</ion-select-option>
-        </ion-select>
+        </ion-select> -->
 
         <br>
 
@@ -65,3 +77,11 @@
     </ion-card-content>
   </ion-card>
 </ion-content>
+
+
+<ion-modal trigger="select-comuna" #idmodalcomuna>
+  <ng-template>
+    <app-typeahead class="ion-page" title="Lista de comunas" [items]="ItemsComunas" [selectedItems]="selectedComunas"
+      (selectionChange)="comunasSelectionChanged($event)" (selectionCancel)="idmodalcomuna.dismiss()"></app-typeahead>
+  </ng-template>
+</ion-modal>

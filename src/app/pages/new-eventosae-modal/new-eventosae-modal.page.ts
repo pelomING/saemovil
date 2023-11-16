@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+
+import { ViewChild } from '@angular/core';
+import { IonModal } from '@ionic/angular';
+
 import { ModalController } from '@ionic/angular';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
@@ -8,7 +12,7 @@ import { IndexdbService } from '../../services/indexdb.service';
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 
-import { Evento, Comuna } from '../../interfaces/interfaces';
+import { Evento, Comuna, Item } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-new-eventosae-modal',
@@ -18,6 +22,17 @@ import { Evento, Comuna } from '../../interfaces/interfaces';
 
 
 export class NewEventosaeModalPage implements OnInit {
+
+  @ViewChild('idmodalcomuna', { static: true }) idmodalcomuna!: IonModal;
+  selectedComunas: string[] = [];
+  ItemsComunas: Item[] = [];
+
+  comunasSelectionChanged(objeto : string[]) {
+    const comuna = this.listaComunas.find((comuna) => comuna.codigo === objeto[0]);
+    this.formularioEventoSae.get('nombre_comuna').setValue(comuna.nombre);
+    this.formularioEventoSae.get('codigo_comuna').setValue(comuna.codigo);
+    this.idmodalcomuna.dismiss();
+  }
 
   public listaTipoEventos: Evento[] = [];
   public listaComunas: Comuna[] = [];
@@ -37,7 +52,9 @@ export class NewEventosaeModalPage implements OnInit {
 
     this.formularioEventoSae = this.formBuilder.group({
       id: [''],
+      despachador: ['', Validators.required],
       tipo_evento: ['', Validators.required],
+      nombre_comuna: ['', Validators.required],
       codigo_comuna: ['', Validators.required],
       numero_ot: ['', Validators.required],
       direccion: ['', Validators.required],
@@ -64,10 +81,19 @@ export class NewEventosaeModalPage implements OnInit {
 
   ngOnInit(): void {
     this.indexdbService.openDatabase()
-      .then((dbIndex) => {
+      .then(async (dbIndex) => {
+        
         this.db = dbIndex;
+
         this.ObtenerRegistrodeTurno();
-        this.loadItemsFromIndexDB();
+        
+        await this.loadItemsFromIndexDB();
+
+        this.ItemsComunas = this.listaComunas.map(comuna => ({
+          text: comuna.nombre || '',
+          value: comuna.codigo || ''
+        }));
+
       })
       .catch((error: any) => {
         console.error('Error al inicializar la base de datos:', error);
@@ -80,11 +106,9 @@ export class NewEventosaeModalPage implements OnInit {
     const itemsEventos = await this.indexdbService.getAllFromIndex('eventos');
     this.listaTipoEventos = itemsEventos;
 
-    if (this.turnoSaeModel) {
-      const itemsComunas = await this.indexdbService.getComunaByOficina(this.turnoSaeModel.codigo_oficina);
-      this.listaComunas = itemsComunas;
-    }
-
+    const itemsComunas = await this.indexdbService.getAllFromIndex('comunas');
+    this.listaComunas = itemsComunas;
+    
   }
 
 

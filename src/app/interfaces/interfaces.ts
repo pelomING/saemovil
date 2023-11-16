@@ -1,4 +1,11 @@
 
+
+export interface Item {
+  text: string;
+  value: string;
+}
+
+
 export interface Usuario {
   avatar?: string;
   _id?: string;
@@ -33,6 +40,16 @@ export interface Oficina {
 export interface Turno {
   codigo?: string;
   horario?: string;
+}
+
+export interface TiposTurnos {
+  codigo_tipoturno?: string;
+  nombre_tipoturno?: string;
+}
+ 
+export interface SaeBrigadas {
+  codigo_brigada?: string;
+  nombre_brigada?: string;
 }
 
 export interface Vehiculo {

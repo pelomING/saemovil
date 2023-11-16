@@ -1,4 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+
+import { ViewChild } from '@angular/core';
+import { IonModal } from '@ionic/angular';
+
+
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
@@ -11,7 +16,7 @@ import { IndexdbService } from '../../services/indexdb.service';
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 
-import { Ayudante, Oficina, Vehiculo, Turno } from '../../interfaces/interfaces';
+import { Ayudante, Oficina, Vehiculo, Turno, TiposTurnos, SaeBrigadas, Item  } from '../../interfaces/interfaces';
 
 @Component({
   selector: 'app-tab1',
@@ -21,11 +26,46 @@ import { Ayudante, Oficina, Vehiculo, Turno } from '../../interfaces/interfaces'
 
 export class Tab1Page implements OnInit {
 
+  @ViewChild('idmodalpatente', { static: true }) idmodalpatente!: IonModal;
+  @ViewChild('idmodalayudante', { static: true }) idmodalayudante!: IonModal;
+
+  selectedFruitsText = '';
+  selectedFruits: string[] = [];
+
+  selectedAyudantes: string[] = [];
+  selectedPatentes: string[] = [];
+
+  ItemsAyudantes: Item[] = [];
+  ItemsPatentes: Item[] = [];
+
+  // private formatData(data: string[]) {
+  //   if (data.length === 1) {
+  //     const ayudante = this.listaAyudantes.find((ayudante) => ayudante.rut_ayudante === data[0]);
+  //     return ayudante;
+  //   }
+  //   return `${data.length} items`;
+  // }
+
+  ayudanteSelectionChanged(objeto : string[]) {
+    const ayudante = this.listaAyudantes.find((ayudante) => ayudante.rut_ayudante === objeto[0]);
+    this.miFormulario.get('nombre_ayudante').setValue(ayudante.nombre);
+    this.miFormulario.get('rut_ayudante').setValue(ayudante.rut_ayudante);
+    this.idmodalayudante.dismiss();
+  }
+
+  patenteSelectionChanged(objeto : string[]) {
+    const vehiculo = this.listaVehiculos.find((vehiculo) => vehiculo.patente === objeto[0]);
+    this.miFormulario.get('patente_vehiculo').setValue(vehiculo.patente);
+    this.idmodalpatente.dismiss();
+  }
+  
   public listaAyudantes: Ayudante[] = [];
   public listaOficinas: Oficina[] = [];
   public listaVehiculos: Vehiculo[] = [];
   public listaTurnos: Turno[] = [];
-
+  public listaTiposTurnos: TiposTurnos[] = [];
+  public listaSaeBrigadas: SaeBrigadas[] = [];
+  
   public turnosae: TurnoSaeModel = new TurnoSaeModel();
   public miFormulario: FormGroup;
   public db!: IDBPDatabase;
@@ -45,10 +85,11 @@ export class Tab1Page implements OnInit {
 
     this.miFormulario = this.formBuilder.group({
       id: [''],
-      codigo_oficina: ['', Validators.required],
-      codigo_turno: ['', Validators.required],
+      codigo_brigada: ['', Validators.required],
+      codigo_tipoturno: ['', Validators.required],
       patente_vehiculo: ['', Validators.required],
-      rut_ayudante: ['', Validators.required],
+      rut_ayudante: ['',Validators.required],
+      nombre_ayudante: ['',Validators.required],
       km_inicia: ['', Validators.required],
     });
 
@@ -58,11 +99,22 @@ export class Tab1Page implements OnInit {
   ngOnInit(): void {
 
     this.indexdbService.openDatabase()
-      .then((dbIndex) => {
+      .then(async (dbIndex) => {
         this.db = dbIndex;
-        console.log("INICIO BASE DE DATOS");
+
         this.ObtenerRegistrodeTurno();
-        this.loadItemsFromIndexDB();
+        await this.loadItemsFromIndexDB();
+
+        this.ItemsAyudantes = this.listaAyudantes.map(ayudante => ({
+          text: ayudante.nombre || '',
+          value: ayudante.rut_ayudante || ''
+        }));
+
+        this.ItemsPatentes = this.listaVehiculos.map(patente => ({
+          text: patente.patente || '',
+          value: patente.patente || ''
+        }));
+
       })
       .catch((error: any) => {
         console.error('Error al inicializar la base de datos:', error);
@@ -82,10 +134,13 @@ export class Tab1Page implements OnInit {
         if (turno_sae) {
           this.miFormulario.patchValue({
             id: turno_sae.id,
-            codigo_oficina: turno_sae.codigo_oficina,
-            codigo_turno: turno_sae.codigo_turno,
+            codigo_brigada: turno_sae.codigo_brigada,
+            codigo_tipoturno: turno_sae.codigo_tipoturno,
+            //codigo_oficina: turno_sae.codigo_oficina,
+            //codigo_turno: turno_sae.codigo_turno,
             patente_vehiculo: turno_sae.patente_vehiculo,
             rut_ayudante: turno_sae.rut_ayudante,
+            nombre_ayudante: turno_sae.nombre_ayudante,
             km_inicia: turno_sae.km_inicia
           });
         } else {
@@ -111,7 +166,7 @@ export class Tab1Page implements OnInit {
 
 
   async loadItemsFromIndexDB() {
-    const tableNames = ['ayudantes', 'oficinas', 'vehiculos', 'turnos'];
+    const tableNames = ['ayudantes', 'vehiculos', 'tiposturnos','saebrigadas'];
 
     for (const tableName of tableNames) {
       await this.loadItems(tableName);
@@ -129,20 +184,19 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  assignItemsToList(tableName: string, items: any[]) {
+  assignItemsToList(tableName: string, items: any[]) {  
     switch (tableName) {
       case 'ayudantes':
         this.listaAyudantes = items;
         break;
-      case 'oficinas':
-        this.listaOficinas = items;
-        console.log("cargar datos en oficina", this.listaOficinas);
-        break;
       case 'vehiculos':
         this.listaVehiculos = items;
         break;
-      case 'turnos':
-        this.listaTurnos = items;
+      case 'tiposturnos':
+        this.listaTiposTurnos = items;
+        break;
+      case 'saebrigadas':
+        this.listaSaeBrigadas = items;
         break;
       // Agregar más casos según las tablas que necesites
     }
@@ -171,7 +225,11 @@ export class Tab1Page implements OnInit {
 
         await this.obtenerUbicacion();
 
-        const { id, codigo_oficina, codigo_turno, patente_vehiculo, rut_ayudante, km_inicia } = this.miFormulario.value;
+        //codigo_oficina, codigo_turno, 
+
+        const { id, codigo_brigada, codigo_tipoturno,patente_vehiculo, rut_ayudante,nombre_ayudante, km_inicia } = this.miFormulario.value;
+
+        console.log("RUT AYUDANTE : ", rut_ayudante);
 
         console.log("Id del registro creado : ", id);
 
@@ -181,9 +239,12 @@ export class Tab1Page implements OnInit {
         const turno_sae: TurnoSaeModel = new TurnoSaeModel({
           rut_maestro: RUT_USER,
           rut_ayudante,
-          codigo_turno,
+          nombre_ayudante,
+          codigo_brigada,
+          codigo_tipoturno,
+          //codigo_turno,
+          //codigo_oficina,
           patente_vehiculo,
-          codigo_oficina,
           km_inicia,
           fecha_hora_inicio: new Date(),
           fecha_hora_final: new Date(),

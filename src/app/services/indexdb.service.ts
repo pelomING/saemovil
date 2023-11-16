@@ -43,6 +43,14 @@ export class IndexdbService {
           db.createObjectStore('turnos', { keyPath: 'id', autoIncrement: true });
         }
 
+        if (!db.objectStoreNames.contains('tiposturnos')) {
+          db.createObjectStore('tiposturnos', { keyPath: 'id', autoIncrement: true });
+        }
+
+        if (!db.objectStoreNames.contains('saebrigadas')) {
+          db.createObjectStore('saebrigadas', { keyPath: 'id', autoIncrement: true });
+        }
+
         if (!db.objectStoreNames.contains('eventos')) {
           const store = db.createObjectStore('eventos', { keyPath: 'id', autoIncrement: true });
           store.createIndex('indexCodigo', 'codigo');
