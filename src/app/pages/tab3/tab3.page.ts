@@ -21,7 +21,7 @@ import { TurnoSaeService } from '../../services/turnosae.service'
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 import { EventoSaeModel } from '../../models/evento-sae.model';
 
-import { Ayudante, Oficina, Vehiculo, Turno } from '../../interfaces/interfaces';
+import { Ayudante, Oficina, Vehiculo, Turno, TiposTurnos, SaeBrigadas } from '../../interfaces/interfaces';
 import { empty } from 'rxjs';
 
 @Component({
@@ -36,6 +36,8 @@ export class Tab3Page {
   public listaOficinas: Oficina[] = [];
   public listaVehiculos: Vehiculo[] = [];
   public listaTurnos: Turno[] = [];
+  public listaTiposTurnos: TiposTurnos[] = [];
+  public listaSaeBrigadas: SaeBrigadas[] = [];
 
   public eventosEnviados: EventoSaeModel[] = [];
 
@@ -61,8 +63,8 @@ export class Tab3Page {
 
     this.miFormulario = this.formBuilder.group({
       id: [''],
-      codigo_oficina: ['', Validators.required],
-      codigo_turno: ['', Validators.required],
+      codigo_brigada: ['', Validators.required],
+      codigo_tipoturno: ['', Validators.required],
       patente_vehiculo: ['', Validators.required],
       rut_ayudante: ['', Validators.required],
       km_inicia: ['', Validators.required],
@@ -154,8 +156,8 @@ export class Tab3Page {
         if (turno_sae) {
           this.miFormulario.patchValue({
             id: turno_sae.id,
-            codigo_oficina: turno_sae.codigo_oficina,
-            codigo_turno: turno_sae.codigo_turno,
+            codigo_brigada: turno_sae.codigo_brigada,
+            codigo_tipoturno: turno_sae.codigo_tipoturno,
             patente_vehiculo: turno_sae.patente_vehiculo,
             rut_ayudante: turno_sae.rut_ayudante,
             km_inicia: turno_sae.km_inicia,
@@ -190,13 +192,10 @@ export class Tab3Page {
 
 
   async loadItemsFromIndexDB() {
-
-    const tableNames = ['ayudantes', 'oficinas', 'vehiculos', 'turnos'];
-
+    const tableNames = ['ayudantes', 'vehiculos', 'tiposturnos','saebrigadas'];
     for (const tableName of tableNames) {
       await this.loadItems(tableName);
     }
-
   }
 
 
@@ -211,19 +210,19 @@ export class Tab3Page {
   }
 
 
-  assignItemsToList(tableName: string, items: any[]) {
+  assignItemsToList(tableName: string, items: any[]) {  
     switch (tableName) {
       case 'ayudantes':
         this.listaAyudantes = items;
         break;
-      case 'oficinas':
-        this.listaOficinas = items;
-        break;
       case 'vehiculos':
         this.listaVehiculos = items;
         break;
-      case 'turnos':
-        this.listaTurnos = items;
+      case 'tiposturnos':
+        this.listaTiposTurnos = items;
+        break;
+      case 'saebrigadas':
+        this.listaSaeBrigadas = items;
         break;
       // Agregar más casos según las tablas que necesites
     }
@@ -310,12 +309,12 @@ export class Tab3Page {
 
               data = {
                 rut_maestro: turno_sae.rut_maestro,
-                codigo_turno: turno_sae.codigo_turno,
                 rut_ayudante: turno_sae.rut_ayudante,
                 patente_vehiculo: turno_sae.patente_vehiculo,
                 km_inicia: turno_sae.km_inicia!.toString(),
                 km_final: turno_sae.km_final!.toString(),
-                codigo_oficina: turno_sae.codigo_oficina,
+                codigo_brigada: turno_sae.codigo_brigada,
+                codigo_tipoturno: turno_sae.codigo_tipoturno,
                 fecha_hora_inicio: turno_sae.fecha_hora_inicio,
                 fecha_hora_final: turno_sae.fecha_hora_final,
                 latitude: turno_sae.latitude,

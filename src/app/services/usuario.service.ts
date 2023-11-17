@@ -90,7 +90,9 @@ export class UsuarioService {
             await this.getObjetoParaSelects('turnos');
             await this.getObjetoParaSelects('vehiculos');
             await this.getObjetoParaSelects('comunas');
-
+            await this.getObjetoParaSelects('tiposturnos');
+            await this.getObjetoParaSelects('saebrigadas'); 
+            
             resolve(true);
 
           } else {
@@ -316,7 +318,18 @@ export class UsuarioService {
                   nombre: objeto.nombre,
                   oficina: objeto.oficina
                 };
+              }else if (tablaApi === 'tiposturnos') {
+                dataToAdd = {
+                  codigo_tipoturno: objeto.id,
+                  nombre_tipoturno: objeto.nombre
+                };
+              }else if (tablaApi === 'saebrigadas') {
+                dataToAdd = {
+                  codigo_brigada: objeto.id,
+                  nombre_brigada: objeto.brigada
+                };
               }
+
 
               if (dataToAdd) {
                 await this.db.add(tablaApi, dataToAdd);

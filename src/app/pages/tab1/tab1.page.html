@@ -9,42 +9,82 @@
 <ion-content [fullscreen]="true" class="ion-padding">
   <ion-card>
     <ion-card-content>
+
+      <!-- 
+      <ion-select fill="outline" id="select-fruits" shape="round" label="Favorite Fruit:" label-placement="floating">
+        <div slot="end" id="selected-fruits">{{ selectedFruitsText }}</div>
+      </ion-select> -->
+
+      <!-- <ion-list [inset]="true">
+        <ion-item [button]="true" [detail]="false" id="select-fruits">
+          <ion-label>Favorite Fruits</ion-label>
+          <div slot="end" id="selected-fruits">{{ selectedFruitsText }}</div>
+        </ion-item>
+      </ion-list> -->
+
+
       <form [formGroup]="miFormulario">
 
-        <ion-select formControlName="codigo_oficina" label="Oficina" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{ oficina.nombre
-            }}</ion-select-option>
+        <ion-select formControlName="codigo_brigada" label="Brigada:" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let brigada of listaSaeBrigadas" [value]="brigada.codigo_brigada">
+            {{ brigada.nombre_brigada }}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <ion-select formControlName="codigo_tipoturno" label="Tipo Turno:" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let tipoturno of listaTiposTurnos" [value]="tipoturno.codigo_tipoturno">
+            {{ tipoturno.nombre_tipoturno }}</ion-select-option>
+        </ion-select>
+
+        <br>
+
+        <!-- <ion-select formControlName="codigo_oficina" label="Oficina" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">
+          {{ oficina.nombre }}</ion-select-option>
         </ion-select>
 
         <br>
 
         <ion-select formControlName="codigo_turno" label="Turno" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let turno of listaTurnos" [value]="turno.codigo">{{ turno.horario
-            }}</ion-select-option>
+          <ion-select-option *ngFor="let turno of listaTurnos" [value]="turno.codigo">
+          {{ turno.horario }}</ion-select-option>
         </ion-select>
 
-        <br>
+        <br> -->
 
-        <ion-select formControlName="patente_vehiculo" label="Vehículo" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.patente">{{ vehiculo.patente
-            }}</ion-select-option>
-        </ion-select>
+        <ion-input formControlName="patente_vehiculo" id="select-patente" type="text" label="Patente:" label-placement="floating" fill="outline"
+        placeholder="Selecionar"></ion-input>
 
-        <br>
+        <!-- <br>
 
-        <ion-select formControlName="rut_ayudante" label="Ayudante" label-placement="floating" fill="outline">
-          <ion-select-option *ngFor="let ayudante of listaAyudantes" [value]="ayudante.rut_ayudante">{{
-            ayudante.nombre
-            }}</ion-select-option>
-        </ion-select>
+        <ion-select formControlName="patente_vehiculo" label="Vehículo:" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.patente">
+            {{ vehiculo.patente }}</ion-select-option>
+        </ion-select> -->
 
         <br>
 
-        <ion-input type="number" formControlName="km_inicia" label="KM Inicial" label-placement="floating" fill="outline" placeholder="Ingresar km inicial"></ion-input>
+        <ion-input formControlName="nombre_ayudante" id="select-ayudante" type="text" label="Nombre Ayudante:" label-placement="floating" fill="outline"
+        placeholder="Selecionar ayudante"></ion-input>
 
         <br>
 
-        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button"
+        <ion-input formControlName="rut_ayudante" readonly="true" type="text" label="Rut Ayudante:" label-placement="floating" fill="outline" ></ion-input>
+
+        <!-- <ion-select formControlName="rut_ayudante" label="Ayudante:" label-placement="floating" fill="outline">
+          <ion-select-option *ngFor="let ayudante of listaAyudantes" [value]="ayudante.rut_ayudante">
+            {{ ayudante.nombre }}</ion-select-option>
+        </ion-select> -->
+
+        <br>
+
+        <ion-input type="number" formControlName="km_inicia" label="KM Inicial:" label-placement="floating"
+          fill="outline" placeholder="Ingresar km inicial"></ion-input>
+
+        <br>
+
+        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button" [disabled]="!miFormulario.valid"
           (click)="guardarInicioTurno()">
           <ion-icon slot="start" name="save"></ion-icon>
           Guardar</ion-button>
@@ -66,9 +106,24 @@
   </ion-card>
 </ion-content>
 
-
-<!-- <ion-footer>
+<!-- 
+  <ion-footer>
     <ion-toolbar>
       <ion-title> Pelom Ingenieria </ion-title>
     </ion-toolbar>
-  </ion-footer> -->
+  </ion-footer> 
+-->
+
+<ion-modal trigger="select-ayudante" #idmodalayudante>
+  <ng-template>
+    <app-typeahead class="ion-page" title="Lista de ayudantes" [items]="ItemsAyudantes" [selectedItems]="selectedAyudantes"
+      (selectionChange)="ayudanteSelectionChanged($event)" (selectionCancel)="idmodalayudante.dismiss()"></app-typeahead>
+  </ng-template>
+</ion-modal>
+
+<ion-modal trigger="select-patente" #idmodalpatente >
+  <ng-template>
+    <app-typeahead class="ion-page" title="Lista de Patentes" [items]="ItemsPatentes" [selectedItems]="selectedPatentes"
+      (selectionChange)="patenteSelectionChanged($event)" (selectionCancel)="idmodalpatente.dismiss()"></app-typeahead>
+  </ng-template>
+</ion-modal>

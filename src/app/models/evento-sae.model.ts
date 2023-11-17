@@ -2,13 +2,16 @@ export class EventoSaeModel {
 
   id!: number;
   numero_ot!: string;
+  despachador!: string;
   tipo_evento!: string;
   direccion!: string;
   requerimiento!: number;
   rut_maestro?: string;
   rut_ayudante?: string;
-  codigo_turno?: string;
-  codigo_oficina?: string;
+  codigo_brigada?: string;
+  codigo_tipoturno?: string;
+  //codigo_turno?: string;
+  //codigo_oficina?: string;
   codigo_comuna!: string;
   fecha_hora_ejecucion!: Date;
   hora_inicio!: string;

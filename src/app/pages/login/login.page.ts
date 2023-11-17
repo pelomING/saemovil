@@ -19,9 +19,11 @@ const VERSION = environment.version;
 })
 export class LoginPage {
 
+  //"20316388-6"
+ 
   loginUser = {
-    rut: '',
-    password: ''
+    rut: '20316388-6',
+    password: '20316388-6'
   };
 
 

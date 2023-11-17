@@ -119,8 +119,8 @@ export class Tab2Page {
         if (turno_sae) {
           this.turnoSaeModel.rut_maestro = turno_sae.rut_maestro;
           this.turnoSaeModel.rut_ayudante = turno_sae.rut_ayudante;
-          this.turnoSaeModel.codigo_turno = turno_sae.codigo_turno;
-          this.turnoSaeModel.codigo_oficina = turno_sae.codigo_oficina;
+          this.turnoSaeModel.codigo_brigada = turno_sae.codigo_brigada;
+          this.turnoSaeModel.codigo_tipoturno = turno_sae.codigo_tipoturno;
         } else {
           console.log(`No se encontró el turno con ID ${turnoId}`);
         }
@@ -148,23 +148,26 @@ export class Tab2Page {
 
         loading.present();
 
-        try {
+        try { 
 
           await this.ObtenerRegistrodeTurno();
 
-          const { numero_ot, direccion, requerimiento, tipo_evento, codigo_comuna, hora_inicio, hora_termino } = result.data;
+          const { numero_ot, despachador, direccion, requerimiento, tipo_evento, codigo_comuna, hora_inicio, hora_termino } = result.data;
 
           await this.obtenerUbicacion();
 
           const evento_sae: EventoSaeModel = new EventoSaeModel({
             numero_ot,
+            despachador,
             tipo_evento,
             direccion,
             requerimiento,
             rut_maestro: this.turnoSaeModel.rut_maestro,
             rut_ayudante: this.turnoSaeModel.rut_ayudante,
-            codigo_turno: this.turnoSaeModel.codigo_turno,
-            codigo_oficina: this.turnoSaeModel.codigo_oficina,
+            codigo_brigada: this.turnoSaeModel.codigo_brigada,
+            codigo_tipoturno: this.turnoSaeModel.codigo_tipoturno,
+            //codigo_turno: this.turnoSaeModel.codigo_turno,
+            //codigo_oficina: this.turnoSaeModel.codigo_oficina,
             codigo_comuna,
             latitude:this.latitude,
             longitude: this.longitude,

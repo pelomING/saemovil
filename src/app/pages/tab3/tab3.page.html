@@ -13,18 +13,21 @@
 
       <form [formGroup]="miFormulario">
 
-        <ion-select formControlName="codigo_oficina" readonly="true" label="Oficina" [disabled]="true"
+        <ion-select formControlName="codigo_brigada" readonly="true" label="Brigada" [disabled]="true"
           label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let oficina of listaOficinas" [value]="oficina.codigo">{{
-            oficina.nombre
-            }}</ion-select-option>
+          <ion-select-option [disabled]="true" *ngFor="let brigada of listaSaeBrigadas"
+            [value]="brigada.codigo_brigada">
+            {{ brigada.nombre_brigada }}
+          </ion-select-option>
         </ion-select>
 
         <br>
 
-        <ion-select formControlName="codigo_turno" label="Turno" label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let turno of listaTurnos" [value]="turno.codigo">{{ turno.horario
-            }}</ion-select-option>
+        <ion-select formControlName="codigo_tipoturno" label="Tipo Turno" label-placement="floating" fill="solid">
+          <ion-select-option [disabled]="true" *ngFor="let tipoturno of listaTiposTurnos"
+            [value]="tipoturno.codigo_tipoturno">
+            {{ tipoturno.nombre_tipoturno }}
+          </ion-select-option>
         </ion-select>
 
         <br>
@@ -51,22 +54,24 @@
 
         <br>
 
-        <ion-input type="number" required formControlName="km_final" label="KM Final" label-placement="floating" fill="outline"
-          placeholder="Ingresar km final"></ion-input>
+        <ion-input type="number" required formControlName="km_final" label="KM Final" label-placement="floating"
+          fill="outline" placeholder="Ingresar km final"></ion-input>
 
         <br>
- 
-        <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button" (click)="guardarFinTurno()">
+
+        <ion-button id="guardarFinTurno" expand="full" color="primary" class="bottom-button"
+          (click)="guardarFinTurno()">
           <ion-icon slot="start" name="save"></ion-icon>
           Guardar</ion-button>
 
         <br>
 
-        <ion-button id="enviarTurnoaMongoDb" expand="full" color="primary" [disabled]="eventosEnviados.length > 0 || kmfinal.length === 0" class="bottom-button"
+        <ion-button id="enviarTurnoaMongoDb" expand="full" color="primary"
+          [disabled]="eventosEnviados.length > 0 || kmfinal.length === 0" class="bottom-button"
           (click)="enviarTurnoaMongoDb()">
           <ion-icon slot="start" name="send"></ion-icon>
           Enviar</ion-button>
- 
+
         <p>* Es necesario enviar todos los eventos y tener el km final</p>
 
         <!-- <ion-item> -->
