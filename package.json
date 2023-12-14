@@ -34,6 +34,7 @@
     "@ionic/storage-angular": "^4.0.0",
     "@jcesarmobile/ssl-skip": "0.2.0",
     "date-fns": "^2.30.0",
+    "date-fns-tz": "^2.0.0",
     "idb": "^7.1.1",
     "ionicons": "^7.0.0",
     "rxjs": "~7.8.0",

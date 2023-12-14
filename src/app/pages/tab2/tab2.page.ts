@@ -121,6 +121,8 @@ export class Tab2Page {
           this.turnoSaeModel.rut_ayudante = turno_sae.rut_ayudante;
           this.turnoSaeModel.codigo_brigada = turno_sae.codigo_brigada;
           this.turnoSaeModel.codigo_tipoturno = turno_sae.codigo_tipoturno;
+          this.turnoSaeModel.patente_vehiculo = turno_sae.patente_vehiculo;
+          this.turnoSaeModel.fecha_hora_inicio = turno_sae.fecha_hora_inicio;
         } else {
           console.log(`No se encontró el turno con ID ${turnoId}`);
         }
@@ -162,10 +164,14 @@ export class Tab2Page {
             tipo_evento,
             direccion,
             requerimiento,
+            
             rut_maestro: this.turnoSaeModel.rut_maestro,
             rut_ayudante: this.turnoSaeModel.rut_ayudante,
             codigo_brigada: this.turnoSaeModel.codigo_brigada,
             codigo_tipoturno: this.turnoSaeModel.codigo_tipoturno,
+            patente_vehiculo: this.turnoSaeModel.patente_vehiculo,
+            fecha_hora_inicio_turno: this.turnoSaeModel.fecha_hora_inicio,
+
             //codigo_turno: this.turnoSaeModel.codigo_turno,
             //codigo_oficina: this.turnoSaeModel.codigo_oficina,
             codigo_comuna,

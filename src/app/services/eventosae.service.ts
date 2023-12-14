@@ -49,7 +49,7 @@ export class EventoSaeService {
 
 
   formatearFecha(fecha: Date): string {
-    return format(fecha, 'dd/MM/yyyy HH:mm'); // Puedes ajustar el formato según tus necesidades
+    return format(fecha, 'dd/MM/yyyy HH:mm:ss'); // Puedes ajustar el formato según tus necesidades
   }
 
 
@@ -64,6 +64,8 @@ export class EventoSaeService {
       codigo_brigada: ev.codigo_brigada,
       codigo_tipoturno: ev.codigo_tipoturno,
       codigo_comuna: ev.codigo_comuna,
+      patente_vehiculo: ev.patente_vehiculo,
+      fecha_hora_inicio_turno: ev.fecha_hora_inicio_turno,
       //codigo_turno: ev.codigo_turno,
       //codigo_oficina: ev.codigo_oficina,
       requerimiento: ev.requerimiento,

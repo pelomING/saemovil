@@ -10,6 +10,9 @@ export class EventoSaeModel {
   rut_ayudante?: string;
   codigo_brigada?: string;
   codigo_tipoturno?: string;
+  patente_vehiculo?: string;
+  fecha_hora_inicio_turno!: string;
+  
   //codigo_turno?: string;
   //codigo_oficina?: string;
   codigo_comuna!: string;

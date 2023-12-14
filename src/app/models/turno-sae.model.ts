@@ -14,8 +14,10 @@ export class TurnoSaeModel {
   patente_vehiculo?: string;
   km_inicia?: string;
   km_final?: string;
-  fecha_hora_inicio?: Date;
-  fecha_hora_final?: Date;
+  
+  fecha_hora_inicio?: string;
+  fecha_hora_final?: string;
+
   latitude?: string;
   longitude?: string;
 

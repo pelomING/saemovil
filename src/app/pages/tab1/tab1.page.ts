@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 
 import { ViewChild } from '@angular/core';
 import { IonModal } from '@ionic/angular';
 
+import { format, toDate } from 'date-fns-tz';
 
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastController } from '@ionic/angular';
@@ -16,7 +17,12 @@ import { IndexdbService } from '../../services/indexdb.service';
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 
-import { Ayudante, Oficina, Vehiculo, Turno, TiposTurnos, SaeBrigadas, Item  } from '../../interfaces/interfaces';
+import { Ayudante, Oficina, Vehiculo, Turno, TiposTurnos, SaeBrigadas, Item } from '../../interfaces/interfaces';
+
+import { TurnoSaeService } from '../../services/turnosae.service'
+import { UiServiceService } from '../../services/ui-service.service';
+import { EventoSaeModel } from '../../models/evento-sae.model';
+
 
 @Component({
   selector: 'app-tab1',
@@ -46,32 +52,38 @@ export class Tab1Page implements OnInit {
   //   return `${data.length} items`;
   // }
 
-  ayudanteSelectionChanged(objeto : string[]) {
+  ayudanteSelectionChanged(objeto: string[]) {
     const ayudante = this.listaAyudantes.find((ayudante) => ayudante.rut_ayudante === objeto[0]);
     this.miFormulario.get('nombre_ayudante').setValue(ayudante.nombre);
     this.miFormulario.get('rut_ayudante').setValue(ayudante.rut_ayudante);
     this.idmodalayudante.dismiss();
   }
 
-  patenteSelectionChanged(objeto : string[]) {
+  patenteSelectionChanged(objeto: string[]) {
     const vehiculo = this.listaVehiculos.find((vehiculo) => vehiculo.patente === objeto[0]);
     this.miFormulario.get('patente_vehiculo').setValue(vehiculo.patente);
     this.idmodalpatente.dismiss();
   }
-  
+
   public listaAyudantes: Ayudante[] = [];
   public listaOficinas: Oficina[] = [];
   public listaVehiculos: Vehiculo[] = [];
   public listaTurnos: Turno[] = [];
   public listaTiposTurnos: TiposTurnos[] = [];
   public listaSaeBrigadas: SaeBrigadas[] = [];
-  
+
   public turnosae: TurnoSaeModel = new TurnoSaeModel();
   public miFormulario: FormGroup;
   public db!: IDBPDatabase;
 
   public latitude: string;
   public longitude: string;
+
+
+  public eventosEnviados: EventoSaeModel[] = [];
+
+  public kmfinal: string = '';
+
 
   constructor(
     private indexdbService: IndexdbService,
@@ -80,7 +92,8 @@ export class Tab1Page implements OnInit {
     private formBuilder: FormBuilder,
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
-    private platform: Platform
+    private platform: Platform,
+    private uiService: UiServiceService
   ) {
 
     this.miFormulario = this.formBuilder.group({
@@ -88,8 +101,8 @@ export class Tab1Page implements OnInit {
       codigo_brigada: ['', Validators.required],
       codigo_tipoturno: ['', Validators.required],
       patente_vehiculo: ['', Validators.required],
-      rut_ayudante: ['',Validators.required],
-      nombre_ayudante: ['',Validators.required],
+      rut_ayudante: ['', Validators.required],
+      nombre_ayudante: ['', Validators.required],
       km_inicia: ['', Validators.required],
     });
 
@@ -123,6 +136,8 @@ export class Tab1Page implements OnInit {
   }
 
 
+  enviarTurno = true;
+
   ObtenerRegistrodeTurno() {
 
     // Asumiendo que tienes el ID del turno que deseas obtener
@@ -143,6 +158,11 @@ export class Tab1Page implements OnInit {
             nombre_ayudante: turno_sae.nombre_ayudante,
             km_inicia: turno_sae.km_inicia
           });
+
+          this.enviarTurno = false;
+
+          console.log('Turno recuperado:', turno_sae);
+
         } else {
           console.log(`No se encontró el turno con ID ${turnoId}`);
         }
@@ -166,7 +186,7 @@ export class Tab1Page implements OnInit {
 
 
   async loadItemsFromIndexDB() {
-    const tableNames = ['ayudantes', 'vehiculos', 'tiposturnos','saebrigadas'];
+    const tableNames = ['ayudantes', 'vehiculos', 'tiposturnos', 'saebrigadas'];
 
     for (const tableName of tableNames) {
       await this.loadItems(tableName);
@@ -184,7 +204,7 @@ export class Tab1Page implements OnInit {
     }
   }
 
-  assignItemsToList(tableName: string, items: any[]) {  
+  assignItemsToList(tableName: string, items: any[]) {
     switch (tableName) {
       case 'ayudantes':
         this.listaAyudantes = items;
@@ -210,8 +230,23 @@ export class Tab1Page implements OnInit {
   //   }
   // }
 
-  
+
+  formatearFecha(fecha: Date): string {
+    return format(fecha, 'dd/MM/yyyy HH:mm:ss'); // Puedes ajustar el formato según tus necesidades
+  }
+
+
+
   async guardarInicioTurno() {
+
+
+    // Utiliza las funciones según sea necesario
+    const date = toDate(new Date());
+    const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss', { timeZone: 'America/New_York' });
+    console.log("FORMATIADA DATE", formattedDate);
+
+    console.log("DATE ", new Date());
+
 
     if (this.miFormulario?.valid) {
 
@@ -227,7 +262,7 @@ export class Tab1Page implements OnInit {
 
         //codigo_oficina, codigo_turno, 
 
-        const { id, codigo_brigada, codigo_tipoturno,patente_vehiculo, rut_ayudante,nombre_ayudante, km_inicia } = this.miFormulario.value;
+        const { id, codigo_brigada, codigo_tipoturno, patente_vehiculo, rut_ayudante, nombre_ayudante, km_inicia } = this.miFormulario.value;
 
         console.log("RUT AYUDANTE : ", rut_ayudante);
 
@@ -246,8 +281,9 @@ export class Tab1Page implements OnInit {
           //codigo_oficina,
           patente_vehiculo,
           km_inicia,
-          fecha_hora_inicio: new Date(),
-          fecha_hora_final: new Date(),
+          km_final: '1',
+          fecha_hora_inicio: this.formatearFecha(new Date()),
+          fecha_hora_final: this.formatearFecha(new Date()),
           fechaSistema: new Date(),
           estadoEnvio: 0,
           latitude: this.latitude,
@@ -322,7 +358,7 @@ export class Tab1Page implements OnInit {
   }
 
 
- 
+
   async obtenerUbicacion() {
     try {
       const coordinates = await Geolocation.getCurrentPosition();
@@ -338,6 +374,108 @@ export class Tab1Page implements OnInit {
   }
 
 
+
+  private turnoSaeService = inject(TurnoSaeService);
+
+
+  async enviarTurnoaMongoDb() {
+
+    let data = this.turnosae;
+
+    let valido: boolean = false;
+
+    if (this.miFormulario?.valid) {
+
+      const { id } = this.miFormulario.value;
+
+
+      console.log("Id del registro creado turno : ", id);
+
+      const loading = await this.loadingCtrl.create({
+        message: 'Enviando...',
+      });
+
+      loading.present();
+
+      try {
+
+
+        await this.turnosaeIndexdbService.getTurnosae(id)
+          .then((turno_sae) => {
+
+            if (turno_sae) {
+
+              data = {
+                rut_maestro: turno_sae.rut_maestro,
+                rut_ayudante: turno_sae.rut_ayudante,
+                patente_vehiculo: turno_sae.patente_vehiculo,
+                km_inicia: turno_sae.km_inicia.toString(),
+                km_final: turno_sae.km_final,
+                codigo_brigada: turno_sae.codigo_brigada,
+                codigo_tipoturno: turno_sae.codigo_tipoturno,
+                fecha_hora_inicio: turno_sae.fecha_hora_inicio,
+                fecha_hora_final: turno_sae.fecha_hora_final,
+                latitude: turno_sae.latitude,
+                longitude: turno_sae.longitude
+              };
+
+              console.log("DATA", data);
+              console.log("Enviando Datos desde Turno");
+
+              valido = true;
+
+              console.log("VALIDO", valido);
+
+            } else {
+
+              this.uiService.alertaInformativa('No hay un turno creado');
+              console.log(`No se encontró el turno con ID ${id}`);
+            }
+
+          })
+          .catch((error) => {
+            console.error('Error al obtener el turno:', error);
+          });
+
+        console.log("DATA", data);
+
+        if (Object(data).length == 0) {
+          this.uiService.alertaInformativa('No hay un turno creado');
+          console.log(`No se encontró el turno con ID ${id}`);
+        }
+        else {
+          if (valido) await this.turnoSaeService.EnviarTurno(data);
+        }
+
+
+        if (valido) 
+        {
+        
+          this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
+        
+        }
+
+        if (valido == false) {
+          // mostrar alerta de usuario y contraseña no correctos
+          this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
+        }
+
+
+      } catch (error) {
+        // Manejar el error (puede mostrar un mensaje de error)
+      } finally {
+        // Cerrar el indicador de carga sin importar si se produjo un error o no
+        loading.dismiss();
+      }
+
+    } else {
+
+      console.log('Formulario inválido. Por favor, complete todos los campos.');
+      await this.presentToast('Formulario inválido.');
+
+    }
+
+  }
 
 
 }

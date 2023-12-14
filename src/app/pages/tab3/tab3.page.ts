@@ -24,6 +24,9 @@ import { EventoSaeModel } from '../../models/evento-sae.model';
 import { Ayudante, Oficina, Vehiculo, Turno, TiposTurnos, SaeBrigadas } from '../../interfaces/interfaces';
 import { empty } from 'rxjs';
 
+import { format, toDate } from 'date-fns-tz';
+
+
 @Component({
   selector: 'app-tab3',
   templateUrl: 'tab3.page.html',
@@ -178,6 +181,13 @@ export class Tab3Page {
         console.error('Error al obtener el turno:', error);
       });
 
+      // Los controles también pueden habilitarse/deshabilitarse después de la creación:
+      this.miFormulario.get('codigo_brigada')?.disable();
+      this.miFormulario.get('codigo_tipoturno')?.disable();
+      this.miFormulario.get('patente_vehiculo')?.disable();
+      this.miFormulario.get('rut_ayudante')?.disable();
+      this.miFormulario.get('km_inicia')?.disable();
+
   }
 
 
@@ -229,7 +239,21 @@ export class Tab3Page {
   }
 
 
+
+  formatearFecha(fecha: Date): string {
+    return format(fecha, 'dd/MM/yyyy HH:mm:ss'); // Puedes ajustar el formato según tus necesidades
+  }
+
+
   async guardarFinTurno() {
+
+
+        // Utiliza las funciones según sea necesario
+        const date = toDate(new Date());
+        const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss', { timeZone: 'America/New_York' });
+        console.log("FORMATIADA DATE", formattedDate);
+    
+        console.log("DATE ", new Date());
 
     if (this.miFormulario?.valid) {
 
@@ -250,7 +274,7 @@ export class Tab3Page {
         console.log("Turno", turnosae);
 
         turnosae!.km_final = km_final;
-        turnosae!.fecha_hora_final = new Date();
+        turnosae!.fecha_hora_final = this.formatearFecha(new Date());
 
         if (turnosae) {
 
