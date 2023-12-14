@@ -164,7 +164,7 @@ export class Tab3Page {
             patente_vehiculo: turno_sae.patente_vehiculo,
             rut_ayudante: turno_sae.rut_ayudante,
             km_inicia: turno_sae.km_inicia,
-            km_final: turno_sae.km_final
+            km_final: ""
           });
 
           if(turno_sae.km_final)
