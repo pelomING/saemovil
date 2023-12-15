@@ -83,8 +83,8 @@
           fill="outline" placeholder="Ingresar km inicial"></ion-input>
 
         <br>
-
-        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button" [disabled]="!miFormulario.valid"
+        
+        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button" [disabled]="esBotonDeshabilitado()"
           (click)="guardarInicioTurno()">
           <ion-icon slot="start" name="save"></ion-icon>
           Guardar</ion-button>

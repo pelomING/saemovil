@@ -53,7 +53,7 @@
 
         <br>
 
-        <ion-input type="number" required formControlName="km_final" label="KM Final" label-placement="floating"
+        <ion-input type="number" required formControlName="km_final" label="KM Final" autofocus label-placement="floating"
           fill="outline" placeholder="Ingresar km final"></ion-input>
 
         <br>
@@ -66,7 +66,7 @@
         <br>
 
         <ion-button id="enviarTurnoaMongoDb" expand="full" color="primary"
-          [disabled]="eventosEnviados.length > 0 || kmfinal.length === 0" class="bottom-button"
+          [disabled]="eventosEnviados.length > 0 || kmfinal === '0' || kmfinal === '' " class="bottom-button"
           (click)="enviarTurnoaMongoDb()">
           <ion-icon slot="start" name="send"></ion-icon>
           Enviar</ion-button>

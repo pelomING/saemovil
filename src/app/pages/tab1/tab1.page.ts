@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { SharedService } from '../../services/SharedService';
 
 import { ViewChild } from '@angular/core';
 import { IonModal } from '@ionic/angular';
@@ -93,7 +94,8 @@ export class Tab1Page implements OnInit {
     private toastController: ToastController,
     private loadingCtrl: LoadingController,
     private platform: Platform,
-    private uiService: UiServiceService
+    private uiService: UiServiceService,
+    private sharedService: SharedService,
   ) {
 
     this.miFormulario = this.formBuilder.group({
@@ -106,7 +108,16 @@ export class Tab1Page implements OnInit {
       km_inicia: ['', Validators.required],
     });
 
+
+
+    this.sharedService.updateCargarTurno$.subscribe(() => {
+      console.log("sharedService.updateCargarTurno");
+      this.ObtenerRegistrodeTurno();
+    });
+
+
   }
+
 
 
   ngOnInit(): void {
@@ -137,6 +148,7 @@ export class Tab1Page implements OnInit {
 
 
   enviarTurno = true;
+  yanoPuedeGuarda = false;
 
   ObtenerRegistrodeTurno() {
 
@@ -159,7 +171,26 @@ export class Tab1Page implements OnInit {
             km_inicia: turno_sae.km_inicia
           });
 
+          console.log("Nombre ayudante : ", turno_sae.nombre_ayudante);
+
           this.enviarTurno = false;
+
+          // si ya fue enviado el turno al servidor no se permiten modificaicones 
+          if (turno_sae.estadoEnvio == 1) {
+
+            this.enviarTurno = true;
+
+            //    this.miFormulario.valid = true;
+
+            // Los controles también pueden habilitarse/deshabilitarse después de la creación:
+            this.miFormulario.get('codigo_brigada')?.disable();
+            this.miFormulario.get('codigo_tipoturno')?.disable();
+            this.miFormulario.get('patente_vehiculo')?.disable();
+            this.miFormulario.get('nombre_ayudante')?.disable();
+            this.miFormulario.get('rut_ayudante')?.disable();
+            this.miFormulario.get('km_inicia')?.disable();
+
+          }
 
           console.log('Turno recuperado:', turno_sae);
 
@@ -173,6 +204,27 @@ export class Tab1Page implements OnInit {
       });
 
   }
+
+
+
+  // Función para deshabilitar el botón basándote en el valor de estadoEnvio
+  esBotonDeshabilitado(): boolean {
+
+    if (this.yanoPuedeGuarda == true) {
+
+      console.log("es BotonDeshabilitado yanoPuedeGuarda", this.yanoPuedeGuarda);
+      return this.enviarTurno;
+
+    }
+    else {
+
+      console.log("es BotonDeshabilitado this.miFormulario.invalid", this.miFormulario.invalid);
+      return this.miFormulario.invalid;
+
+    }
+
+  }
+
 
 
   async presentToast(message: string) {
@@ -281,13 +333,13 @@ export class Tab1Page implements OnInit {
           //codigo_oficina,
           patente_vehiculo,
           km_inicia,
-          km_final: '1',
+          km_final: '0',
           fecha_hora_inicio: this.formatearFecha(new Date()),
           fecha_hora_final: this.formatearFecha(new Date()),
           fechaSistema: new Date(),
-          estadoEnvio: 0,
           latitude: this.latitude,
-          longitude: this.longitude
+          longitude: this.longitude,
+          estadoEnvio: 0
         });
 
         if (id > 0) {
@@ -299,6 +351,7 @@ export class Tab1Page implements OnInit {
           let turno = this.turnosaeIndexdbService.getTurnosae(turno_sae.id);
 
           turno_sae.km_final = (await turno).km_final;
+          turno_sae.estadoEnvio = (await turno).estadoEnvio;
 
           this.turnosaeIndexdbService.actualizarTurnosae(turno_sae).then(() => {
             console.log('Datos Actualizados en IndexDB:', turno_sae);
@@ -307,8 +360,9 @@ export class Tab1Page implements OnInit {
         } else {
 
           turno_sae.id = 1;
-          // this.db.add('jornada-sae', turno);
-          // console.log('Datos guardados en IndexDB:', turno);
+
+          console.log('Datos que seran guardados en IndexDB:', turno_sae);
+
           this.turnosaeIndexdbService.guardarTurnosae(turno_sae).then(() => {
             console.log('Datos guardados en IndexDB:', turno_sae);
           });
@@ -381,8 +435,8 @@ export class Tab1Page implements OnInit {
   async enviarTurnoaMongoDb() {
 
     let data = this.turnosae;
-
     let valido: boolean = false;
+    let estadoEnvio: number = 0;
 
     if (this.miFormulario?.valid) {
 
@@ -399,6 +453,7 @@ export class Tab1Page implements OnInit {
 
       try {
 
+        let nombreAyudante: string = "";
 
         await this.turnosaeIndexdbService.getTurnosae(id)
           .then((turno_sae) => {
@@ -424,6 +479,10 @@ export class Tab1Page implements OnInit {
 
               valido = true;
 
+              estadoEnvio = turno_sae.estadoEnvio;
+
+              nombreAyudante = turno_sae.nombre_ayudante;
+
               console.log("VALIDO", valido);
 
             } else {
@@ -444,22 +503,46 @@ export class Tab1Page implements OnInit {
           console.log(`No se encontró el turno con ID ${id}`);
         }
         else {
-          if (valido) await this.turnoSaeService.EnviarTurno(data);
+
+          if (valido) {
+
+            // SOLO si el estado de envio es cero
+            if (estadoEnvio == 0) {
+
+              let result = await this.turnoSaeService.EnviarTurno(data);
+
+              if (result) {
+
+                this.enviarTurno = true;
+                this.yanoPuedeGuarda = true;
+
+                data.id = id;
+                data.estadoEnvio = 1;
+                data.nombre_ayudante = nombreAyudante;
+
+                this.turnosaeIndexdbService.actualizarTurnosae(data).then(() => {
+                  console.log('Datos Actualizados en IndexDB:', data);
+                });
+
+                this.ObtenerRegistrodeTurno();
+
+              }
+
+            }
+
+          }
+
         }
 
 
-        if (valido) 
-        {
-        
+        if (valido) {
           this.uiService.alertaInformativa('Este registro ha sido enviado al servidor');
-        
         }
 
         if (valido == false) {
           // mostrar alerta de usuario y contraseña no correctos
           this.uiService.alertaInformativa('No es posible conectar con el servidor intentar más tarde');
         }
-
 
       } catch (error) {
         // Manejar el error (puede mostrar un mensaje de error)

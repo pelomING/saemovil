@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { SharedService } from '../../services/SharedService';
-import { LoadingController } from '@ionic/angular';
+import { AlertController, LoadingController } from '@ionic/angular';
 
 import { ToastController } from '@ionic/angular';
 import { IDBPDatabase } from 'idb';
@@ -57,6 +57,7 @@ export class Tab3Page {
     private indexdbService: IndexdbService,
     public navCtrl: NavController,
     private usuarioService: UsuarioService,
+    private alertController: AlertController,
     private turnosaeIndexdbService: TurnoSaeIndexdbService,
     private eventoSaeIndexdbService: EventoSaeIndexdbService,
     private uiService: UiServiceService,
@@ -71,10 +72,68 @@ export class Tab3Page {
       patente_vehiculo: ['', Validators.required],
       rut_ayudante: ['', Validators.required],
       km_inicia: ['', Validators.required],
-      km_final: ['', Validators.required]
+      km_final: ['', [Validators.required, this.validarKmFinal.bind(this)]]
+    });
+
+    // Suscribirse a cambios en km_final
+    this.miFormulario.get('km_final').valueChanges.subscribe(() => {
+      this.validarYMostrarAlerta();
     });
 
   }
+
+
+
+  async validarYMostrarAlerta() {
+
+    const kmFinalControl = this.miFormulario.get('km_final');
+    const kmFinal = kmFinalControl.value;
+    if (kmFinal !== null && kmFinal !== undefined && kmFinal <= 0) {
+
+      const alert = await this.alertController.create({
+        header: 'Alerta',
+        message: 'El valor de KM Final debe ser mayor a cero. y su valor mayor a KM Inicial',
+        backdropDismiss: false,
+        buttons: [
+          {
+            text: 'OK',
+            handler: () => {
+
+            }
+          }
+        ]
+      });
+
+      await alert.present();
+
+    }
+
+  }
+
+
+
+  validarKmFinal(control: AbstractControl): { [key: string]: boolean } | null {
+
+    // Verifica si el formulario está inicializado
+    if (!this.miFormulario) {
+      return null;
+    }
+
+    const kmInicia = this.miFormulario.get('km_inicia').value;
+
+    const kmFinal = control.value;
+
+    if (kmFinal !== null && kmFinal !== undefined && kmFinal <= 0) {
+      return { 'kmFinalNoMayorACero': true };
+    }
+
+    if (kmInicia !== null && kmFinal !== null && kmFinal <= kmInicia) {
+      return { 'kmFinalNoMayorAInicia': true };
+    }
+
+    return null;
+  }
+
 
 
   ngOnInit(): void {
@@ -84,9 +143,10 @@ export class Tab3Page {
 
         this.db = dbIndex;
         console.log("Cargar turno sae");
-        this.loadItemsFromIndexDB();
-        this.ObtenerRegistrodeTurno();
-        this.ObtenerEstadoEnvioEventos();
+
+        //this.loadItemsFromIndexDB();
+        //this.ObtenerRegistrodeTurno();
+        //this.ObtenerEstadoEnvioEventos();
 
       })
       .catch((error: any) => {
@@ -97,7 +157,7 @@ export class Tab3Page {
     this.sharedService.updateList$.subscribe(() => {
       // Actualizar la lista aquí
       console.log("sharedService.updateList");
-      this.ObtenerRegistrodeTurno();
+      //this.ObtenerRegistrodeTurno();
     });
 
   }
@@ -117,20 +177,20 @@ export class Tab3Page {
 
   ionViewWillEnter() {
     console.log("ionViewWillEnter");
-    
+
     this.indexdbService.openDatabase()
-    .then((dbIndex) => {
+      .then((dbIndex) => {
 
-      this.db = dbIndex;
-      console.log("Cargar turno sae");
-      this.loadItemsFromIndexDB();
-      this.ObtenerRegistrodeTurno();
-      this.ObtenerEstadoEnvioEventos();
+        this.db = dbIndex;
+        console.log("Cargar turno sae");
+        this.loadItemsFromIndexDB();
+        this.ObtenerRegistrodeTurno();
+        this.ObtenerEstadoEnvioEventos();
 
-    })
-    .catch((error: any) => {
-      console.error('Error al inicializar la base de datos:', error);
-    });
+      })
+      .catch((error: any) => {
+        console.error('Error al inicializar la base de datos:', error);
+      });
 
   }
 
@@ -147,6 +207,8 @@ export class Tab3Page {
       });
   }
 
+  
+  estadoEnvioValue: number = 0;
 
   async ObtenerRegistrodeTurno() {
 
@@ -164,13 +226,14 @@ export class Tab3Page {
             patente_vehiculo: turno_sae.patente_vehiculo,
             rut_ayudante: turno_sae.rut_ayudante,
             km_inicia: turno_sae.km_inicia,
-            km_final: ""
+            km_final: turno_sae.km_final
           });
 
-          if(turno_sae.km_final)
-          {
+          if (turno_sae.km_final) {
             this.kmfinal = turno_sae.km_final!.toString();
           }
+
+          this.estadoEnvioValue = turno_sae.estadoEnvio;
 
         } else {
           console.log(`No se encontró el turno con ID ${turnoId}`);
@@ -181,12 +244,12 @@ export class Tab3Page {
         console.error('Error al obtener el turno:', error);
       });
 
-      // Los controles también pueden habilitarse/deshabilitarse después de la creación:
-      this.miFormulario.get('codigo_brigada')?.disable();
-      this.miFormulario.get('codigo_tipoturno')?.disable();
-      this.miFormulario.get('patente_vehiculo')?.disable();
-      this.miFormulario.get('rut_ayudante')?.disable();
-      this.miFormulario.get('km_inicia')?.disable();
+    // Los controles también pueden habilitarse/deshabilitarse después de la creación:
+    this.miFormulario.get('codigo_brigada')?.disable();
+    this.miFormulario.get('codigo_tipoturno')?.disable();
+    this.miFormulario.get('patente_vehiculo')?.disable();
+    this.miFormulario.get('rut_ayudante')?.disable();
+    this.miFormulario.get('km_inicia')?.disable();
 
   }
 
@@ -202,7 +265,7 @@ export class Tab3Page {
 
 
   async loadItemsFromIndexDB() {
-    const tableNames = ['ayudantes', 'vehiculos', 'tiposturnos','saebrigadas'];
+    const tableNames = ['ayudantes', 'vehiculos', 'tiposturnos', 'saebrigadas'];
     for (const tableName of tableNames) {
       await this.loadItems(tableName);
     }
@@ -220,7 +283,7 @@ export class Tab3Page {
   }
 
 
-  assignItemsToList(tableName: string, items: any[]) {  
+  assignItemsToList(tableName: string, items: any[]) {
     switch (tableName) {
       case 'ayudantes':
         this.listaAyudantes = items;
@@ -245,15 +308,14 @@ export class Tab3Page {
   }
 
 
-  async guardarFinTurno() {
+  async guardarFinTurno() { 
 
+    // Utiliza las funciones según sea necesario
+    const date = toDate(new Date());
+    const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss', { timeZone: 'America/New_York' });
+    console.log("FORMATIADA DATE", formattedDate);
 
-        // Utiliza las funciones según sea necesario
-        const date = toDate(new Date());
-        const formattedDate = format(date, 'yyyy-MM-dd HH:mm:ss', { timeZone: 'America/New_York' });
-        console.log("FORMATIADA DATE", formattedDate);
-    
-        console.log("DATE ", new Date());
+    console.log("DATE ", new Date());
 
     if (this.miFormulario?.valid) {
 
@@ -300,12 +362,39 @@ export class Tab3Page {
 
     } else {
 
-      console.log('Formulario inválido. Por favor, complete todos los campos.');
+      this.validadordeKMfinal();
       await this.presentToast('Formulario inválido. Por favor, complete todos los campos.');
 
     }
   }
 
+
+  async validadordeKMfinal() {
+
+    const kmInicia = this.miFormulario.get('km_inicia').value;
+    const kmFinal = this.miFormulario.get('km_final').value;
+
+    if ((kmFinal !== null && kmFinal !== undefined && kmFinal <= 0) || (kmInicia !== null && kmFinal !== null && kmFinal <= kmInicia)) {
+
+      const alert = await this.alertController.create({
+        header: 'Alerta',
+        message: 'El valor de KM Final debe ser mayor a cero. y su valor mayor a KM Inicial',
+        backdropDismiss: false,
+        buttons: [
+          {
+            text: 'OK',
+            handler: () => {
+
+            }
+          }
+        ]
+      });
+
+      await alert.present();
+
+    }
+
+  }
 
 
   async enviarTurnoaMongoDb() {
@@ -383,8 +472,8 @@ export class Tab3Page {
 
     } else {
 
-      console.log('Formulario inválido. Por favor, complete todos los campos.');
-      await this.presentToast('Formulario inválido.');
+      this.validadordeKMfinal();
+      await this.presentToast('Formulario inválido. Por favor, complete todos los campos.');
 
     }
 

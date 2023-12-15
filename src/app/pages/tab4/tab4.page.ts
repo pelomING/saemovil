@@ -88,11 +88,15 @@ export class Tab4Page {
 
   async cerrarApp(): Promise<void> {
     try {
+
       const turno_sae = await this.ObtenerRegistrodeTurno();
   
       // Verifica si turno_sae tiene datos
-      if (Object.keys(turno_sae).length > 0) {
-        this.mostrarMensaje('Existe un registro de turno y no se puede cerrar la app. Se requiere enviar el turno para cerrar.');
+      if (turno_sae && Object.keys(turno_sae).length > 0) {
+
+        await this.mostrarMensaje('Existe un registro de turno y no se puede cerrar la app. Se requiere enviar el turno para cerrar.');      
+
+
       } else {
         this.confirmCerrar();
       }
@@ -100,6 +104,7 @@ export class Tab4Page {
       // Maneja el error si es necesario
       console.error('Error al cerrar la app:', error);
     }
+
   }
 
   
@@ -110,7 +115,17 @@ export class Tab4Page {
     this.alertController.create({
       header: 'Aviso',
       message: mensaje,
-      buttons: ['OK']
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+
+            this.navCtrl.navigateRoot('/main/tabs/tab3', { animated: true });
+
+          }
+        }
+      ]
     }).then(alert => alert.present());
   }
 
