@@ -190,6 +190,9 @@ export class Tab1Page implements OnInit {
             this.miFormulario.get('rut_ayudante')?.disable();
             this.miFormulario.get('km_inicia')?.disable();
 
+            this.yanoPuedeGuarda = true;
+            this.esBotonDeshabilitado();
+
           }
 
           console.log('Turno recuperado:', turno_sae);
