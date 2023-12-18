@@ -6,7 +6,7 @@ export const environment = {
   production: false,
   url: 'https://backend-saemovil-development.up.railway.app',
   //url: 'http://localhost:3000',
-  version:'SAE Móvil V1.1.5'
+  version:'SAE Móvil V1.1.4'
 };
 
 /*
