@@ -5,7 +5,6 @@
     {
       "name": "sae-app",
       "installMode": "prefetch",
-      "updateMode": "prefetch",
       "resources": {
         "files": [
           "/favicon.ico",
