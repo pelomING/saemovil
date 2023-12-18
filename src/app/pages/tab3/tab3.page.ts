@@ -397,6 +397,42 @@ export class Tab3Page {
   }
 
 
+
+  async Reconectar() {
+
+    console.log("RECONECTAR")
+
+    try {
+
+      await this.usuarioService.cargarRut_User();
+
+      if (this.usuarioService.rut_user) 
+      {
+
+        console.log("Obtengo el Token");
+        let loginUser = this.usuarioService.rut_user
+        let loginPassword = this.usuarioService.rut_user
+
+        const valido = await this.usuarioService.reconectar(loginUser, loginPassword);
+
+        if (valido) {
+          console.log("Reconectado con exito");
+        } else {
+          console.log("Error al reconectar");
+        }
+
+      }
+
+
+    } catch (error) {
+      // Manejar el error (puede mostrar un mensaje de error)
+    } finally {
+      // Cerrar el indicador de carga sin importar si se produjo un error o no
+    }
+
+  }
+
+
   async enviarTurnoaMongoDb() {
 
     let data = this.turnosae;
@@ -445,6 +481,8 @@ export class Tab3Page {
 
         console.log("DATA", data);
         console.log("Enviando Datos desde Turno");
+
+        this.Reconectar();
 
         const valido = await this.turnoSaeService.EnviarTurno(data);
 

@@ -21,6 +21,9 @@ import { TurnoSaeModel } from '../../models/turno-sae.model';
 import { TurnoSaeService } from '../../services/turnosae.service'
 import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service';
 
+import { UsuarioService } from '../../services/usuario.service';
+
+
 
 @Component({
   selector: 'app-view-eventosae',
@@ -51,6 +54,7 @@ export class ViewEventosaePage implements OnInit {
     private sharedService: SharedService,
     private loadingCtrl: LoadingController,
     private alertController: AlertController,
+    private usuarioService: UsuarioService,
     private turnosaeIndexdbService: TurnoSaeIndexdbService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,) { }
@@ -131,6 +135,43 @@ export class ViewEventosaePage implements OnInit {
   }
 
 
+
+  async Reconectar() {
+
+    console.log("RECONECTAR")
+
+    try {
+
+      await this.usuarioService.cargarRut_User();
+
+      if (this.usuarioService.rut_user) 
+      {
+
+        console.log("Obtengo el Token");
+        let loginUser = this.usuarioService.rut_user
+        let loginPassword = this.usuarioService.rut_user
+
+        const valido = await this.usuarioService.reconectar(loginUser, loginPassword);
+
+        if (valido) {
+          console.log("Reconectado con exito");
+        } else {
+          console.log("Error al reconectar");
+        }
+
+      }
+
+
+    } catch (error) {
+      // Manejar el error (puede mostrar un mensaje de error)
+    } finally {
+      // Cerrar el indicador de carga sin importar si se produjo un error o no
+    }
+
+  }
+
+
+
   async enviarEventoaMongoDb() {
 
 
@@ -141,6 +182,8 @@ export class ViewEventosaePage implements OnInit {
     loading.present();
 
     try {
+
+      this.Reconectar();
 
       console.log("Enviando Datos desde Evento");
       const valido = await this.eventoSaeService.EnviarEvento(this.eventosae);
@@ -188,6 +231,7 @@ export class ViewEventosaePage implements OnInit {
 
     } catch (error) {
       // Manejar el error (puede mostrar un mensaje de error)
+      console.error('Error al enviar el evento:', error);
     } finally {
       // Cerrar el indicador de carga sin importar si se produjo un error o no
       loading.dismiss();
@@ -255,6 +299,9 @@ export class ViewEventosaePage implements OnInit {
 
         // SOLO si el estado de envio es cero
         if (estadoEnvio == 0) {
+
+
+          this.Reconectar();
 
           // enviar el turno
           let result = await this.turnoSaeService.EnviarTurno(data);
