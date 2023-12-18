@@ -57,11 +57,17 @@ export class ViewEventosaePage implements OnInit {
 
 
   ngOnInit(): void {
+
     this.indexDBService.openDatabase()
+
       .then(() => this.buscarEventoforId())
+
       .catch((error: any) => {
+
         console.error('Error al inicializar la base de datos:', error);
+
       });
+
   }
 
 
@@ -88,15 +94,19 @@ export class ViewEventosaePage implements OnInit {
 
 
   buscarEventoforId(): void {
+
     const id = this.activatedRoute.snapshot.paramMap.get('id') as string;
+    
     console.log('buscarEventoforId : ', id);
+
     this.eventoSaeIndexdb.getEventoSae(parseInt(id, 10))
       .then(event => {
 
         this.eventosae = event;
         this.buscarTipoEvento(this.eventosae.tipo_evento);
         this.buscarComuna(this.eventosae.codigo_comuna);
-        console.log('Registro encontrado :', event);
+
+        console.log('Registro encontrado :', this.eventosae);
 
       })
       .catch(error => {

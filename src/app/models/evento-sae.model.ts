@@ -5,7 +5,10 @@ export class EventoSaeModel {
   despachador!: string;
   tipo_evento!: string;
   direccion!: string;
-  requerimiento!: number;
+  
+  trabajo_solicitado?: string;
+  trabajo_realizado?: string;
+
   rut_maestro?: string;
   rut_ayudante?: string;
   codigo_brigada?: string;

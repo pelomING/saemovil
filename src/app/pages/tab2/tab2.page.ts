@@ -200,7 +200,7 @@ export class Tab2Page {
 
           await this.ObtenerRegistrodeTurno();
 
-          const { numero_ot, despachador, direccion, requerimiento, tipo_evento, codigo_comuna, hora_inicio, hora_termino } = result.data;
+          const { numero_ot, despachador, direccion, trabajo_solicitado,trabajo_realizado, tipo_evento, codigo_comuna, hora_inicio, hora_termino } = result.data;
 
           await this.obtenerUbicacion();
 
@@ -209,7 +209,8 @@ export class Tab2Page {
             despachador,
             tipo_evento,
             direccion,
-            requerimiento,
+            trabajo_solicitado,
+            trabajo_realizado,
 
             rut_maestro: this.turnoSaeModel.rut_maestro,
             rut_ayudante: this.turnoSaeModel.rut_ayudante,
@@ -220,6 +221,7 @@ export class Tab2Page {
 
             //codigo_turno: this.turnoSaeModel.codigo_turno,
             //codigo_oficina: this.turnoSaeModel.codigo_oficina,
+            
             codigo_comuna,
             latitude: this.latitude,
             longitude: this.longitude,

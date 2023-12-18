@@ -68,7 +68,9 @@ export class EventoSaeService {
       fecha_hora_inicio_turno: ev.fecha_hora_inicio_turno,
       //codigo_turno: ev.codigo_turno,
       //codigo_oficina: ev.codigo_oficina,
-      requerimiento: ev.requerimiento,
+      trabajo_solicitado: ev.trabajo_solicitado,
+      trabajo_realizado: ev.trabajo_realizado,
+
       hora_inicio:ev.hora_inicio,
       hora_termino:ev.hora_termino,
       direccion: ev.direccion,
