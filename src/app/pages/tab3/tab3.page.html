@@ -13,9 +13,8 @@
 
       <form [formGroup]="miFormulario">
 
-        <ion-select formControlName="codigo_brigada" readonly="true" label="Brigada" [disabled]="true"
-          label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let brigada of listaSaeBrigadas"
+        <ion-select formControlName="codigo_brigada" label="Brigada" label-placement="floating" fill="solid">
+          <ion-select-option *ngFor="let brigada of listaSaeBrigadas"
             [value]="brigada.codigo_brigada">
             {{ brigada.nombre_brigada }}
           </ion-select-option>
@@ -24,7 +23,7 @@
         <br>
 
         <ion-select formControlName="codigo_tipoturno" label="Tipo Turno" label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let tipoturno of listaTiposTurnos"
+          <ion-select-option *ngFor="let tipoturno of listaTiposTurnos"
             [value]="tipoturno.codigo_tipoturno">
             {{ tipoturno.nombre_tipoturno }}
           </ion-select-option>
@@ -33,7 +32,7 @@
         <br>
 
         <ion-select formControlName="patente_vehiculo" label="Vehiculo" label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.patente">{{
+          <ion-select-option *ngFor="let vehiculo of listaVehiculos" [value]="vehiculo.patente">{{
             vehiculo.patente
             }}</ion-select-option>
         </ion-select>
@@ -41,7 +40,7 @@
         <br>
 
         <ion-select formControlName="rut_ayudante" label="Ayudante" label-placement="floating" fill="solid">
-          <ion-select-option [disabled]="true" *ngFor="let ayudante of listaAyudantes"
+          <ion-select-option *ngFor="let ayudante of listaAyudantes"
             [value]="ayudante.rut_ayudante">{{
             ayudante.nombre
             }}</ion-select-option>
@@ -49,12 +48,12 @@
 
         <br>
 
-        <ion-input type="text" readonly="true" formControlName="km_inicia" label="KM Inicial" label-placement="floating"
+        <ion-input type="text" formControlName="km_inicia" label="KM Inicial" label-placement="floating"
           fill="solid" placeholder=""></ion-input>
 
         <br>
 
-        <ion-input type="number" required formControlName="km_final" label="KM Final" label-placement="floating"
+        <ion-input type="number" required formControlName="km_final" label="KM Final" autofocus label-placement="floating"
           fill="outline" placeholder="Ingresar km final"></ion-input>
 
         <br>
@@ -67,7 +66,7 @@
         <br>
 
         <ion-button id="enviarTurnoaMongoDb" expand="full" color="primary"
-          [disabled]="eventosEnviados.length > 0 || kmfinal.length === 0" class="bottom-button"
+          [disabled]="eventosEnviados.length > 0 || kmfinal === '0' || kmfinal === '' " class="bottom-button"
           (click)="enviarTurnoaMongoDb()">
           <ion-icon slot="start" name="send"></ion-icon>
           Enviar</ion-button>

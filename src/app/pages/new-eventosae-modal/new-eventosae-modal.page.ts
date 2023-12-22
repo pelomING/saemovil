@@ -52,24 +52,18 @@ export class NewEventosaeModalPage implements OnInit {
 
     this.formularioEventoSae = this.formBuilder.group({
       id: [''],
+      numero_ot: ['', Validators.required],
       despachador: ['', Validators.required],
+      direccion: ['', Validators.required],
+      trabajo_solicitado: ['', Validators.required],
+      trabajo_realizado: ['', Validators.required],
       tipo_evento: ['', Validators.required],
       nombre_comuna: ['', Validators.required],
       codigo_comuna: ['', Validators.required],
-      numero_ot: ['', Validators.required],
-      direccion: ['', Validators.required],
-      requerimiento: ['', Validators.required],
-      hora_inicio: [
-        '',
-        [Validators.required, Validators.pattern(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)],
-      ],
-      hora_termino: [
-        '',
-        [Validators.required, Validators.pattern(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)],
-      ],
+      hora_inicio: ['', [Validators.required, Validators.pattern(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)],],
+      hora_termino: ['', [Validators.required, Validators.pattern(/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/)],],
     });
     
-
   }
 
 

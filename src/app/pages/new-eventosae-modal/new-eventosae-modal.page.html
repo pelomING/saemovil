@@ -32,7 +32,12 @@
 
         <br>
 
-        <ion-textarea label="Trabajo Solicitado" formControlName="requerimiento" labelPlacement="floating"
+        <ion-textarea label="Trabajo Solicitado" formControlName="trabajo_solicitado" labelPlacement="floating"
+          fill="outline" placeholder="Enter text"></ion-textarea>
+
+        <br>
+
+        <ion-textarea label="Trabajo Realizado" formControlName="trabajo_realizado" labelPlacement="floating"
           fill="outline" placeholder="Enter text"></ion-textarea>
 
         <br>
@@ -69,7 +74,9 @@
 
         <br>
 
-        <ion-button id="open-loading" expand="full"  [disabled]="!formularioEventoSae.valid"  color="primary" class="bottom-button" (click)="guardarEventoSae()">
+        <!-- [disabled]="!formularioEventoSae.valid" -->
+
+        <ion-button id="open-loading" expand="full" color="primary" class="bottom-button" (click)="guardarEventoSae()">
           <ion-icon slot="start" name="save"></ion-icon>
           Guardar</ion-button>
 

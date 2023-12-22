@@ -42,7 +42,7 @@ export class Tab2Page {
     private sharedService: SharedService,
     private loadingCtrl: LoadingController,
     private platform: Platform
-  ) { 
+  ) {
 
     this.sharedService.eventosaeSelected$.subscribe(eventosaeId => {
       // Aquí decides qué hacer con la información, por ejemplo, recargar la lista
@@ -88,14 +88,60 @@ export class Tab2Page {
 
   cargarEventos(): void {
     this.eventoSaeIndexdb.getAllEventoSae()
-      .then(events => {
-        this.eventos_sae = events;
-        console.log('Eventos obtenidos:', events);
+      .then(async events => {
+        if (events.length > 0) {
+          this.eventos_sae = events;
+
+          console.log('Eventos obtenidos:', events);
+
+          // Filtrar eventos con estado de envío en 0
+          const eventosEstadoCero = this.eventos_sae.filter(evento => evento.estadoEnvio === 0);
+
+          if (eventosEstadoCero.length === 0) {
+            
+            this.confirmCerrar();
+
+          }
+
+          console.log('Eventos con estado de envío en 0:', eventosEstadoCero.length);
+
+        } else {
+          console.log('No hay eventos disponibles.');
+        }
       })
       .catch(error => {
         console.error('Error al obtener los eventos:', error);
       });
   }
+
+
+
+
+
+  async confirmCerrar() {
+
+    const alert = await this.alertController.create({
+      header: 'Aviso',
+      message: 'Todos los eventos han sido enviados al servidor, ¿desea cerrar la app?',
+      buttons: [
+        {
+          text: 'No',
+          role: 'cancel'
+        },
+        {
+          text: 'Si',
+          handler: async () => {
+
+            this.navCtrl.navigateRoot('/main/tabs/tab4', { animated: true });
+
+          }
+        }
+      ]
+    });
+    await alert.present();
+  }
+
+
 
 
   async refresh(ev: any) {
@@ -121,6 +167,8 @@ export class Tab2Page {
           this.turnoSaeModel.rut_ayudante = turno_sae.rut_ayudante;
           this.turnoSaeModel.codigo_brigada = turno_sae.codigo_brigada;
           this.turnoSaeModel.codigo_tipoturno = turno_sae.codigo_tipoturno;
+          this.turnoSaeModel.patente_vehiculo = turno_sae.patente_vehiculo;
+          this.turnoSaeModel.fecha_hora_inicio = turno_sae.fecha_hora_inicio;
         } else {
           console.log(`No se encontró el turno con ID ${turnoId}`);
         }
@@ -148,11 +196,11 @@ export class Tab2Page {
 
         loading.present();
 
-        try { 
+        try {
 
           await this.ObtenerRegistrodeTurno();
 
-          const { numero_ot, despachador, direccion, requerimiento, tipo_evento, codigo_comuna, hora_inicio, hora_termino } = result.data;
+          const { numero_ot, despachador, direccion, trabajo_solicitado,trabajo_realizado, tipo_evento, codigo_comuna, hora_inicio, hora_termino } = result.data;
 
           await this.obtenerUbicacion();
 
@@ -161,15 +209,21 @@ export class Tab2Page {
             despachador,
             tipo_evento,
             direccion,
-            requerimiento,
+            trabajo_solicitado,
+            trabajo_realizado,
+
             rut_maestro: this.turnoSaeModel.rut_maestro,
             rut_ayudante: this.turnoSaeModel.rut_ayudante,
             codigo_brigada: this.turnoSaeModel.codigo_brigada,
             codigo_tipoturno: this.turnoSaeModel.codigo_tipoturno,
+            patente_vehiculo: this.turnoSaeModel.patente_vehiculo,
+            fecha_hora_inicio_turno: this.turnoSaeModel.fecha_hora_inicio,
+
             //codigo_turno: this.turnoSaeModel.codigo_turno,
             //codigo_oficina: this.turnoSaeModel.codigo_oficina,
+            
             codigo_comuna,
-            latitude:this.latitude,
+            latitude: this.latitude,
             longitude: this.longitude,
             fecha_hora_ejecucion: new Date(),
             hora_inicio,
@@ -197,10 +251,33 @@ export class Tab2Page {
   }
 
 
-  deleteItem(messageId: number): void {
+  async deleteItem(messageId: number, estadoEnvio: number): Promise<void> {
+
     console.log("ELIMINAR : ", messageId);
-    this.confirmDelete(messageId);
+
+    console.log("ESTADO ENVIO : ", estadoEnvio);
+
+    if (estadoEnvio == 1) {
+      this.confirmDelete(messageId);
+    }
+    else {
+      await this.mostrarMensaje('El evento no puede ser eliminado. ya que no ha sido enviado al servidor');
+
+    }
+
   }
+
+
+
+  mostrarMensaje(mensaje: string): void {
+    this.alertController.create({
+      header: 'Aviso',
+      message: mensaje,
+      backdropDismiss: false,
+      buttons: ['OK']
+    }).then(alert => alert.present());
+  }
+
 
 
   async confirmDelete(messageId: number) {
@@ -249,7 +326,7 @@ export class Tab2Page {
   }
 
 
- 
+
   async obtenerUbicacion() {
     try {
       const coordinates = await Geolocation.getCurrentPosition();

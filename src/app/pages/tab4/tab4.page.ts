@@ -17,6 +17,7 @@ import { TurnoSaeIndexdbService } from '../../services/turno-sae.indexdb.service
 import { EventoSaeIndexdbService } from '../../services/evento-sae.indexdb.service';
 
 
+
 import { TurnoSaeService } from '../../services/turnosae.service'
 import { TurnoSaeModel } from '../../models/turno-sae.model';
 import { EventoSaeModel } from '../../models/evento-sae.model';
@@ -84,9 +85,68 @@ export class Tab4Page {
 
 
 
+
   async cerrarApp(): Promise<void> {
-    this.confirmCerrar();
+    try {
+
+      const turno_sae = await this.ObtenerRegistrodeTurno();
+  
+      // Verifica si turno_sae tiene datos
+      if (turno_sae && Object.keys(turno_sae).length > 0) {
+
+        await this.mostrarMensaje('Existe un registro de turno y no se puede cerrar la app. Se requiere enviar el turno para cerrar.');      
+
+
+      } else {
+        this.confirmCerrar();
+      }
+    } catch (error) {
+      // Maneja el error si es necesario
+      console.error('Error al cerrar la app:', error);
+    }
+
   }
+
+  
+
+
+
+  mostrarMensaje(mensaje: string): void {
+    this.alertController.create({
+      header: 'Aviso',
+      message: mensaje,
+      backdropDismiss: false,
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+
+            this.navCtrl.navigateRoot('/main/tabs/tab3', { animated: true });
+
+          }
+        }
+      ]
+    }).then(alert => alert.present());
+  }
+
+
+
+
+async ObtenerRegistrodeTurno(): Promise<any> {
+  // Asumiendo que tienes el ID del turno que deseas obtener
+  const turnoId = 1;
+
+  try {
+    const turno_sae = await this.turnosaeIndexdbService.getTurnosae(turnoId);
+    console.log("Existe Turno: ", turno_sae);
+    this.turnosae = turno_sae;
+    return turno_sae;
+  } catch (error) {
+    console.error('Error al obtener el turno:', error);
+    throw error; // Puedes manejar el error aquí o dejar que se propague
+  }
+}
+
 
 
   async confirmCerrar() {
@@ -157,6 +217,10 @@ export class Tab4Page {
       await this.usuarioService.getObjetoParaSelects('vehiculos');
 
       await this.usuarioService.getObjetoParaSelects('comunas');
+
+      await this.usuarioService.getObjetoParaSelects('tiposturnos');
+
+      await this.usuarioService.getObjetoParaSelects('saebrigadas');
 
       await this.presentToast('Los datos se guardaron con éxito');
 

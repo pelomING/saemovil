@@ -30,8 +30,10 @@ export class Tab2Guard implements CanLoad {
                 console.log("enviar a tab desde guard");
                 return true; // Permite la carga Tab
             } else {
-                this.uiService.alertaInformativa('Es necesario iniciar el turno para agregar eventos');
+                this.uiService.alertaInformativa('Es necesario iniciar el turno para ingresar a esta sección');
+                
                 this.navCtrl.navigateRoot('/main/tabs/tab1', { animated: true });
+
                 return false; // Evita la carga de Tab2Page
             }
 

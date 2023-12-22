@@ -22,8 +22,8 @@ export class LoginPage {
   //"20316388-6"
  
   loginUser = {
-    rut: '20316388-6',
-    password: '20316388-6'
+    rut: '',
+    password: ''
   };
 
 
